@@ -1,0 +1,291 @@
+SMART FITNESS ADVISOR
+DDL QUERIES
+
+1.)TO CREATE TABLE  USERS
+SQL> create table users(user_id integer primary key,age integer,DOB date,email_id varchar(30),address_city varchar(30),address_state varchar(30),address_street varchar(30),user_type varchar(7));
+
+Table created.
+
+SQL> alter table users add constraint c9 check(user_type in('customer','trainer'));
+
+Table altered.
+
+
+2.)TO SEE THE STRUCTURE OF TABLE USERS
+
+SQL> DESC USERS;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USER_ID                                   NOT NULL NUMBER(38)
+ AGE                                                NUMBER(38)
+ DOB                                                DATE
+ EMAIL_ID                                           VARCHAR2(30)
+ ADDRESS_CITY                                       VARCHAR2(30)
+ ADDRESS_STATE                                      VARCHAR2(30)
+ ADDRESS_STREET                                     VARCHAR2(30)
+ USER_TYPE                                          VARCHAR2(7)
+
+2.TO CREATE A TABLE CUSTOMER
+SQL> create table CUSTOMER(FITNESS_LEVEL VARCHAR(20),USER_ID INTEGER,CONSTRAINT FK_CUS FOREIGN KEY(USER_ID) REFERENCES USERS(USER_ID));
+
+Table created.
+
+SQL> DESC CUSTOMER
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FITNESS_LEVEL                                      VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+3.)TO CREATE TABLE TRAINER
+
+SQL> create table TRAINER(T_ID INTEGER,PRIMARY KEY(T_ID),QUALIFICATION VARCHAR(20),EXPERIENCE INTEGER,SPECIALIZATION VARCHAR(20),HEAD_ID INTEGER,USER_ID INTEGER,CONSTRAINT FK_TRAINER FOREIGN KEY(USER_ID) REFERENCES USERS(USER_ID));
+
+Table created.
+
+SQL> DESC TRAINER;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ T_ID                                      NOT NULL NUMBER(38)
+ QUALIFICATION                                      VARCHAR2(20)
+ EXPERIENCE                                         NUMBER(38)
+ SPECIALIZATION                                     VARCHAR2(20)
+ HEAD_ID                                            NUMBER(38)
+ USER_ID                                            NUMBER(38)
+
+
+4.)TO CREATE TABLE LOGIN
+
+
+SQL> create table LOGIN(PASSWORD CHAR(8),USERNAME VARCHAR(20) CHECK(USERNAME LIKE '@%'),USER_ID INTEGER,CONSTRAINT FK_TRAIN FOREIGN KEY(USER_ID) REFERENCES USERS(USER_ID),PRIMARY KEY(PASSWORD));
+
+Table created.
+
+SQL> DESC login;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                  NOT NULL CHAR(8)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+5.)TRUNCATE TABLE LOGIN
+
+SQL> TRUNCATE TABLE LOGIN;
+
+Table truncated.
+
+6.)MODIFY DATA TYPE OF PASSWORD IN LOGIN TABLE
+
+SQL> ALTER TABLE LOGIN MODIFY PASSWORD VARCHAR(10);
+
+Table altered.
+SQL> DESC LOGIN;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                           VARCHAR2(10)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+7.)TO KEEP CHECK CONTRAINT FOR PASSWORD LENGTH
+
+SQL> ALTER TABLE LOGIN ADD CONSTRAINT C2 CHECK(LENGTH(PASSWORD)=8);
+
+Table altered.
+
+8._TO DROP AND ADD PRIMARY KEY TO LOGIN TABLE
+
+SQL> ALTER TABLE LOGIN DROP PRIMARY KEY;
+
+Table altered.
+
+SQL> DESC login;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                           CHAR(8)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+SQL> ALTER TABLE LOGIN ADD PRIMARY KEY(PASSWORD);
+
+Table altered.
+
+SQL> DESC LOGIN;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                  NOT NULL CHAR(8)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+9.)COPYING THE USERS TABLE CONTENT AND STRUCTURE TO USERSS
+
+SQL> CREATE TABLE USERSS AS SELECT * FROM  USERS;
+
+Table created.
+
+SQL> DESC USERSS;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USER_ID                                            NUMBER(38)
+ AGE                                                NUMBER(38)
+ DOB                                                DATE
+ EMAIL_ID                                           VARCHAR2(30)
+ ADDRESS_CITY                                       VARCHAR2(30)
+ ADDRESS_STATE                                      VARCHAR2(30)
+ ADDRESS_STREET                                     VARCHAR2(30)
+ USER_TYPE  
+
+10.)RENAME THE USERSS TO USER_COPY
+
+SQL> RENAME  USERSS TO USER_COPY;
+
+Table renamed.
+SQL> DESC USERSS;
+ERROR:
+ORA-04043: object USERSS does not exist
+
+SQL> DESC USER_COPY;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USER_ID                                            NUMBER(38)
+ AGE                                                NUMBER(38)
+ DOB                                                DATE
+ EMAIL_ID                                           VARCHAR2(30)
+ ADDRESS_CITY                                       VARCHAR2(30)
+ ADDRESS_STATE                                      VARCHAR2(30)
+ ADDRESS_STREET                                     VARCHAR2(30)
+ USER_TYPE                                          VARCHAR2(7)
+
+11.)TO RENAME COLUMN COLUMN EMAIL_ID TO EMAIL
+
+SQL> ALTER TABLE USERS RENAME COLUMN EMAIL_ID TO EMAIL;
+
+Table altered.
+
+SQL> DESC USERS;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USER_ID                                   NOT NULL NUMBER(38)
+ AGE                                                NUMBER(38)
+ DOB                                                DATE
+ EMAIL                                              VARCHAR2(30)
+ ADDRESS_CITY                                       VARCHAR2(30)
+ ADDRESS_STATE                                      VARCHAR2(30)
+ ADDRESS_STREET                                     VARCHAR2(30)
+ USER_TYPE                                          VARCHAR2(7)
+
+12.)TO CREATE TABLE ACTIVITY_LEVEL_CATEGORY
+
+SQL> CREATE TABLE ACTIVITY_LEVEL_CATEGORY(A_ID INTEGER PRIMARY KEY,LEVEL_NAME VARCHAR(20),DAILY_EX_DAYS INTEGER);
+
+Table created.
+
+13.)TO CREATE A TABLE HEALTH POFILE
+
+SQL> desc health_profile;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ P_ID                                      NOT NULL NUMBER(38)
+ UPDATE_DATE                               NOT NULL DATE
+ A_ID                                               NUMBER(38)
+ USER_ID                                            NUMBER(38)
+ HEIGHT                                             NUMBER(38)
+ WEIGHT                                             FLOAT(126)
+ BMI_VAL                                            FLOAT(126)
+
+14.)TO CREATE A TABLE TDEE_REOCORD 
+
+SQL> create table tdee_record(tdee_id integer,update_date date,primary key(tdee_id,update_date),a_id integer,user_id integer,TDEE_val float,constraint fk_ac foreign key(a_id) references activity_level_category(a_id),constraint fk_u foreign key(user_id) references users(user_id));
+
+Table created.
+
+SQL> desc tdee_record;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ TDEE_ID                                   NOT NULL NUMBER(38)
+ UPDATE_DATE                               NOT NULL DATE
+ A_ID                                               NUMBER(38)
+ USER_ID                                            NUMBER(38)
+ TDEE_VAL                                           FLOAT(126)
+
+
+
+15.)TO CHANGE THE DATA TYPE OF HEIGHT TO FLOAT
+
+SQL> alter table health_profile modify height float;
+
+Table altered.
+
+SQL> desc health_profile;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ P_ID                                      NOT NULL NUMBER(38)
+ UPDATE_DATE                               NOT NULL DATE
+ A_ID                                               NUMBER(38)
+ USER_ID                                            NUMBER(38)
+ HEIGHT                                             FLOAT(126)
+ WEIGHT                                             FLOAT(126)
+ BMI_VAL                                            FLOAT(126)
+
+ 
+
+16.)TO CREATE TABLE EXERCISE
+
+SQL> create table exercise(ex_id integer primary key,ex_name varchar(20),muscle_grp varchar(20),no_of_sets integer,repititions integer,duration integer,cal_burn float);
+
+Table created.
+
+SQL> desc exercise;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EX_ID                                     NOT NULL NUMBER(38)
+ EX_NAME                                            VARCHAR2(20)
+ MUSCLE_GRP                                         VARCHAR2(20)
+ NO_OF_SETS                                         NUMBER(38)
+ REPITITIONS                                        NUMBER(38)
+ DURATION                                           NUMBER(38)
+ CAL_BURN                                           FLOAT(126)
+
+17.)TO CREATE TABLE WORKOUT_PLANS
+
+SQL> desc workout_plans;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ WORKOUT_ID                                NOT NULL NUMBER(38)
+ WORKOUT_NAME                                       VARCHAR2(20)
+ TYPE                                               VARCHAR2(20)
+ DIFFICULTY                                         VARCHAR2(10)
+ DURATION                                           NUMBER(38)
+ EST_BURN                                           FLOAT(126)
+ SCHEDULE_ID                                        NUMBER(38)
+
+18.TO CREATE TABLE WORKOUT_SCHEDULE
+
+SQL> create table workout_schedule(schedule_id integer,sets integer,reps integer,day_of_week varchar(10),workout_id integer,ex_id integer,constraint fk_work foreign key(workout_id) references workout_plans(workout_id),constraint fk_ex foreign key(ex_id) references exercise(ex_id));
+
+Table created.
+
+SQL> desc workout_schedule;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SCHEDULE_ID                                        NUMBER(38)
+ SETS                                               NUMBER(38)
+ REPS                                               NUMBER(38)
+ DAY_OF_WEEK                                        VARCHAR2(10)
+ WORKOUT_ID                                         NUMBER(38)
+ EX_ID                                              NUMBER(38)
+
+20.TO ADD FOREIGN KEY TO TABLE LOGIN
+
+SQL> ALTER TABLE LOGIN ADD CONSTRAINT C7 FOREIGN KEY(USER_ID) REFERENCES USERS(USER_ID);
+
+Table altered.
+
+21.TO DROP TABLE LOGIN
+
+SQL> drop table login;
+
+Table dropped.
+
+SQL> DESC LOGIN;
+ERROR:
+ORA-04043: object LOGIN does not exist
+
