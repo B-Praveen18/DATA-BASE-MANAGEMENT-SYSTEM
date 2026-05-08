@@ -1,0 +1,909 @@
+1.)TRIGGER TO BEFORE INSERT FOR USER NAME SHOULD NOT BE NULL
+
+SQL>  create or replace trigger bi before insert on users for each row
+  2    begin
+  3    if :new.name is null then
+  4       raise_application_error(-20000,'customer name should not be null');
+  5    end if;
+  6    end;
+  7    /
+
+Trigger created.
+
+SQL> insert into users(user_id,name) values (99,null);
+insert into users(user_id,name) values (99,null)
+            *
+ERROR at line 1:
+ORA-20000: customer name should not be null
+ORA-06512: at "SYSTEM.BI", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.BI'
+
+2.)TRIGGER TO FIRE AFTER A NEW USER CREATED TO DISPLAY THEIR NAME
+
+SQL> create or replace trigger ai after insert on users for each row
+  2  begin
+  3  dbms_output.put_line('new row inserted name:'||:new.name);
+  4  end;
+  5  /
+
+Trigger created.
+
+SQL> insert into users(user_id,name) values(99,'ravi ashwin');
+new row inserted name:ravi ashwin
+
+1 row created.
+
+3.)TRIGGER TO FIRE BEFOR A ROW DELETED THAT THEIR AGE SHOULD NOT BE NULL
+
+SQL> create or replace trigger bd before delete on users for each row
+  2  begin
+  3  if :old.age is null then
+  4     raise_application_error(-20001,'age is null cant delete');
+  5  end if;
+  6  end;
+  7  /
+
+Trigger created.
+
+SQL> delete from users where age is null;
+delete from users where age is null
+            *
+ERROR at line 1:
+ORA-20001: age is null cant delete
+ORA-06512: at "SYSTEM.BD", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.BD'
+
+SQL> delete from users where user_id=18;
+
+1 row deleted.
+
+4.)TRIGGER TO RISE AFTER A ROW DELETE THAT BY SHOWING THEIR DETAILS
+SQL>  create or replace trigger ad after delete on users for each row
+  2  begin
+  3  dbms_output.put_line('delete row details'||' name:'||:old.name||' age:'||:old.age);
+  4  end;
+  5  /
+
+Trigger created.
+
+SQL> insert into users(user_id,name,age) values(99,'ashwin',43);
+new row inserted name:ashwin
+
+1 row created.
+
+SQL> delete from users where user_id=99;
+delete row details name:ashwin age:43
+
+1 row deleted.
+
+5.)TRIGGER TO FIRE WHEN THE USER TRY TO UPADTE AGE AS NEGATIVE
+
+SQL>  create or replace trigger bu before update on users for each row
+  2        begin
+  3        if :new.age<0 then
+  4           raise_application_error(-20002,'customer name should not be null');
+  5        end if;
+  6        end;
+  7        /
+
+Trigger created.
+
+SQL> SQL> update users set age=-19 where user_id=18;
+update users set age=-19 where user_id=18
+       *
+ERROR at line 1:
+ORA-20002: customer name should not be null
+ORA-06512: at "SYSTEM.BU", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.BU'
+
+
+SQL> update users set age=19 where user_id=18;
+
+1 row updated.
+
+6.)TRIGGER TO FIRE AFTER THE UPADTE AND DISPLAY THE UPADTE AGE
+
+SQL> create or replace trigger au after update on users for each row
+  2  begin
+  3  dbms_output.put_line('updated age:'||:new.age||' for '||:old.name);
+  4  end;
+  5  /
+
+Trigger created.
+
+SQL> update users set age=18 where user_id=18;
+updated age:18 for @praveenvirat
+
+1 row updated.
+
+7.)TRIGGER TO INSERT A SAME ROW INTO USER_COPY AFTER A NEW RECORD INSERTED INTO USERS
+
+SQL> select * from user_copy;
+
+no rows selected
+
+SQL> create or replace trigger ain  after insert on users for each row
+  2  begin
+  3  insert into user_copy(user_id,name,age) values(:new.user_id,:new.name,:new.age);
+  4  end;
+  5  /
+
+SQL> insert into users(user_id,name,age) values(99,'ashwin',43);
+new row inserted name:ashwin
+
+1 row created.
+
+SQL> select * from user_copy;
+
+   USER_ID NAME                   AGE
+---------- --------------- ----------
+        99 ashwin                  43
+
+SQL> insert into users(user_id,name,age) values(100,'gayle',47);
+new row inserted name:gayle
+
+1 row created.
+
+SQL> select * from user_copy;
+
+   USER_ID NAME                   AGE
+---------- --------------- ----------
+        99 ashwin                  43
+       100 gayle                   47
+
+8.)TRIGGER TO INSERT THE NEWLY CREATED RECORD IN USERS TO USER_COPY AND TO UPDATE THE STATUS OF USER_COPY AUTOMATICALLY BASED ON VALUE INSERTED IN AGE(I.E AGE>30 'SENIOR' ELSE 'JUNIOR')
+
+SQL> create or replace trigger ain after insert on users for each row
+  2  begin
+  3  insert into user_copy(user_id,name,age) values(:new.user_id,:new.name,:new.age);
+  4  if :new.age>30 then
+  5   update user_copy set status='senior' where user_id=:new.user_id;
+  6  else
+  7   update user_copy set status='junior' where user_id=:new.user_id;
+  8  end if;
+  9  end;
+ 10  /
+
+Trigger created.
+
+SQL> insert into users(user_id,name,age) values(102,'suryavanshi',15);
+new row inserted name:suryavanshi
+
+1 row created.
+
+SQL>  insert into users(user_id,name,age) values(101,'dhoni',47);
+new row inserted name:dhoni
+
+1 row created.
+
+SQL> select * from user_copy;
+
+   USER_ID NAME                   AGE STATUS
+---------- --------------- ---------- ----------
+       102 suryavanshi             15 junior
+       101 dhoni                   47 senior
+
+9.)COMPOUND TRIGGER
+
+
+SQL> create or replace trigger t for insert or delete on user_copy compound trigger
+  2  before each row is
+  3  begin
+  4  if inserting then
+  5     dbms_output.put_line('INSERTED RECORD-NAME:'||:new.name||' AGE'||:new.age);
+  6  end if;
+  7  end before each row;
+  8
+  9  after each row is
+ 10  begin
+ 11  if deleting then
+ 12     dbms_output.put_line('DELETED RECORD-NAME:'||:old.name||' AGE:'||:old.age);
+ 13  end if;
+ 14  end after each row;
+ 15  end t;
+ 16  /
+
+Trigger created.
+
+SQL> insert into user_copy(user_id,name,age) values(18,'praveen',19);
+INSERTED RECORD-NAME:praveen AGE19
+rows inserted successfully
+
+1 row created.
+
+SQL> delete from user_copy where user_id=18;
+DELETED RECORD-NAME:praveen AGE:19
+
+1 row deleted.
+
+10.)STATEMENT LEVEL TRIGGER
+
+SQL> CREATE OR REPLACE TRIGGER stmt_trigger
+  2  AFTER INSERT ON user_copy
+  3  BEGIN
+  4     DBMS_OUTPUT.PUT_LINE('INSERT STATEMENT EXECUTED');
+  5  END;
+  6  /
+
+Trigger created.
+
+SQL> INSERT INTO user_copy
+  2  SELECT 5,'RAVI',25,'aa' FROM dual
+  3  UNION ALL
+  4  SELECT 6,'ARUN',26,'bb' FROM dual;
+INSERT STATEMENT EXECUTED
+
+2 rows created.
+
+HACKERRANK___________________
+
+
+SQL> desc c_login
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                           VARCHAR2(8)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+ LAST_UPDATE                                        TIMESTAMP(6)
+1.)A)Write a code in PL/SQL TO create a trigger that automatically updates a 'last_modified' timestamp whenever a row in a specific table is updated.
+
+SQL> create or replace trigger time before update on c_login for each row
+  2  begin
+  3  :new.last_update:=systimestamp;
+  4  end;
+  5  /
+
+Trigger created.
+
+SQL> select * from c_login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+LAST_UPDATE
+---------------------------------------------------------------------------
+1frr2323 fv                            2
+
+
+
+SQL> update c_login set username='praveen' where user_id=2;
+
+1 row updated.
+
+SQL> select * from c_login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+LAST_UPDATE
+---------------------------------------------------------------------------
+1frr2323 praveen                       2
+16-MAR-26 11.06.43.451000 PM
+
+1.)B)Write a code in PL/SQL to create a trigger that prevents updates on a certain column during specific hours of the day.
+
+SQL> create or replace trigger restrict before update on c_login for each row
+  2  begin
+  3  if TO_NUMBER(TO_CHAR(SYSDATE,'HH')) >= 18 or TO_NUMBER(TO_CHAR(SYSDATE,'HH')) < 9 then
+  4     raise_application_error(-20009,'updates are not allowed during this time');
+  5  end if;
+  6  end;
+  7  /
+
+Trigger created.
+
+SQL>  update c_login set username='praveen' where user_id=2;
+ update c_login set username='praveen' where user_id=2
+        *
+ERROR at line 1:
+ORA-20009: updates are not allowed during this time
+ORA-06512: at "SYSTEM.RESTRICT", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.RESTRICT'
+
+2.)A)A)Write a code in PL/SQL to develop a trigger that enforces referential integrity by preventing the deletion of a parent record if child records exist.
+
+SQL> create or replace trigger restrict_main before delete on users for each row
+  2  declare
+  3  n number;
+  4  begin
+  5  select count(*) into n from login where user_id=:old.user_id;
+  6  if n>0 then
+  7     raise_application_error(-20003,'cannot delete record inherted ny some other table');
+  8  end if;
+  9  end;
+ 10  /
+
+Trigger created.
+
+SQL> delete from users where user_id=18;
+delete from users where user_id=18
+            *
+ERROR at line 1:
+ORA-20003: cannot delete record inherted ny some other table
+ORA-06512: at "SYSTEM.RESTRICT_MAIN", line 6
+ORA-04088: error during execution of trigger 'SYSTEM.RESTRICT_MAIN'
+
+2.)B.)Write a code in PL/SQL to create a trigger that checks for duplicate values in a specific column and raises an exception if found.
+
+SQL> create or replace trigger restrict_inser before insert on users for each row
+  2  declare
+  3  n number;
+  4  begin
+  5  select count(*) into n from users where email=:new.email;
+  6  if n>0 then
+  7     raise_application_error(-20004,'cannot insert email already exist');
+  8  end if;
+  9  end;
+ 10  /
+
+Trigger created.
+
+SQL> select email from users where user_id=18;
+
+EMAIL
+------------------------------
+virat18@gmail.com
+
+SQL> insert into users(email) values('virat18@gmail.com');
+insert into users(email) values('virat18@gmail.com')
+            *
+ERROR at line 1:
+ORA-20004: cannot insert email already exist
+ORA-06512: at "SYSTEM.RESTRICT_INSER", line 6
+ORA-04088: error during execution of trigger 'SYSTEM.RESTRICT_INSER'
+_______________________________________________________________________________________________________	
+7.a)
+
+SQL> CREATE TABLE Student (student_id   INT PRIMARY KEY,student_name VARCHAR(25),city VARCHAR(25));
+
+Table created.
+
+SQL> CREATE TABLE Course (course_id   INT PRIMARY KEY,course_name VARCHAR(25),department  VARCHAR(25));
+
+Table created.
+
+SQL> CREATE TABLE Enroll (
+  2      student_id INT,
+  3      course_id  INT,
+  4      marks      INT,
+  5      PRIMARY KEY (student_id, course_id),
+  6      FOREIGN KEY (student_id) REFERENCES Student(student_id),
+  7      FOREIGN KEY (course_id)  REFERENCES Course(course_id)
+  8  );
+
+Table created.
+
+SQL> CREATE TABLE Teaches (
+  2      instructor_name VARCHAR(25),
+  3      course_id       INT,
+  4      FOREIGN KEY (course_id) REFERENCES Course(course_id)
+  5  );
+
+Table created.
+
+
+SQL> INSERT INTO Student VALUES (1, 'praveen',   'Chennai');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (2, 'david',  'Madurai');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (3, 'manoj',  'Trichy');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (4, 'prince',  'Chennai');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES (102, 'OS','CSE');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES (103, 'Networks','ECE');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (5, 'prasanna',   'Coimbatore');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES (101, 'DBMS',    'CSE')
+  2  ;
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. kavi', 101);
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. mala', 102);
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. rajasekar',   103);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (1, 101, 85);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (1, 102, 90);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (2, 101, 78);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (3, 102, 92);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (4, 101, 88);
+
+1 row created.
+
+SQL> INSERT INTO Enroll VALUES (5, 103, 76);
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. Kumar', 101);
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. Kumar', 102);
+
+1 row created.
+
+SQL> INSERT INTO Teaches VALUES ('Dr. Raj',   103);
+
+1 row created
+
+A. Increase marks by 10% for students in courses taught by 'Dr. Kumar'
+
+SQL> select student_id,instructor_name from enroll e join teaches t using(course_id) where instructor_name='Dr. Kumar';
+
+STUDENT_ID INSTRUCTOR_NAME                
+---------- ------------------------- 
+         1 Dr. Kumar                         
+         1 Dr. Kumar                         
+         2 Dr. Kumar                         
+         3 Dr. Kumar                         
+         4 Dr. Kumar                         
+
+SQL> UPDATE Enroll
+  2  SET marks =marks * 1.10
+  3  WHERE course_id IN (
+  4      SELECT course_id FROM Teaches
+  5      WHERE instructor_name = 'Dr. Kumar'
+  6  );
+
+5 rows updated.
+
+SQL> select student_id,instructor_name,marks from enroll e join teaches t using(course_id) where instructor_name='Dr. Kumar';
+
+STUDENT_ID INSTRUCTOR_NAME                MARKS
+---------- ------------------------- ----------
+         1 Dr. Kumar                         94
+         1 Dr. Kumar                         99
+         2 Dr. Kumar                         86
+         3 Dr. Kumar                        101
+         4 Dr. Kumar                         97
+
+
+B. Student name with the second highest marks
+
+SQL> SELECT s.student_name, e.marks
+  2  FROM Student s
+  3  JOIN Enroll e ON s.student_id = e.student_id
+  4  WHERE e.marks = (
+  5      SELECT MAX(marks)
+  6      FROM Enroll
+  7      WHERE marks < (SELECT MAX(marks) FROM Enroll)
+  8  )
+  9  AND ROWNUM = 1;
+
+STUDENT_NAME                   MARKS
+------------------------- ----------
+praveen                           99
+
+C. Course names where marks obtained > average marks of all students
+
+SQL> SELECT AVG(marks) FROM Enroll;
+
+AVG(MARKS)
+----------
+92.00897
+
+SQL> SELECT c.course_name,
+  2         (SELECT AVG(marks) FROM Enroll) AS average_marks
+  3  FROM Course c
+  4  JOIN Enroll e ON c.course_id = e.course_id
+  5  WHERE e.marks > (
+  6      SELECT AVG(marks) FROM Enroll
+  7  )
+  8  GROUP BY c.course_name;
+
+COURSE_NAME               AVERAGE_MARKS
+------------------------- -------------
+OS                           92.1666667
+DBMS                         92.1666667
+
+ Student name and city of students who (enrolled in more than one course)
+
+SQL> SELECT s.student_name, s.city
+  2  FROM Student s
+  3  WHERE s.student_id IN (
+  4      SELECT student_id
+  5      FROM Enroll
+  6      GROUP BY student_id
+  7      HAVING COUNT(course_id) > 1
+  8  );
+
+STUDENT_NAME              CITY
+------------------------- -------------------------
+praveen                   Chennai
+
+PL/SQL Function to return course name with largest number of enrollments
+
+SQL> CREATE OR REPLACE FUNCTION get_most
+  2  RETURN VARCHAR2
+  3  AS
+  4      v_course_name VARCHAR2(25);
+  5  BEGIN
+  6      SELECT c.course_name
+  7      INTO v_course_name
+  8      FROM Course c
+  9      JOIN Enroll e ON c.course_id = e.course_id
+ 10      GROUP BY c.course_name
+ 11      HAVING COUNT(e.student_id) = (
+ 12          SELECT MAX(COUNT(student_id))
+ 13          FROM Enroll
+ 14          GROUP BY course_id
+ 15      );
+ 16
+ 17      RETURN v_course_name;
+ 18  END get_most;
+ 19  /
+
+Function created.
+
+SQL> SELECT get_most_enrolled_course() FROM DUAL;
+
+GET_MOST_ENROLLED_COURSE()
+--------------------------------------------------------------------------------
+DBMS
+
+
+7.b)
+
+SQL> CREATE TABLE Members (
+  2      member_id   INT PRIMARY KEY,
+  3      member_name VARCHAR(25),
+  4      dept        VARCHAR(25),
+  5      address     VARCHAR(50),
+  6      phone       VARCHAR(15)
+  7  );
+
+Table created.
+
+SQL>
+SQL> CREATE TABLE Books (
+  2      book_id    INT PRIMARY KEY,
+  3      book_title VARCHAR(50),
+  4      author     VARCHAR(25),
+  5      category   VARCHAR(25),
+  6      price      FLOAT
+  7  );
+
+Table created.
+
+SQL>
+SQL> CREATE TABLE Borrow (
+  2      member_id   INT,
+  3      book_id     INT,
+  4      issue_date  DATE,
+  5      return_date DATE,
+  6      PRIMARY KEY (member_id, book_id),
+  7      FOREIGN KEY (member_id) REFERENCES Members(member_id),
+  8      FOREIGN KEY (book_id)   REFERENCES Books(book_id)
+  9  );
+
+Table created.
+
+SQL>
+SQL> CREATE TABLE Staff (
+  2      staff_id   INT PRIMARY KEY,
+  3      staff_name VARCHAR(25),
+  4      block      VARCHAR(10),
+  5      building   VARCHAR(10)
+  6  );
+
+Table created.
+
+SQL>
+SQL> CREATE TABLE Fine (
+  2      member_id INT,
+  3      amount    FLOAT,
+  4      status    VARCHAR(15),
+  5      FOREIGN KEY (member_id) REFERENCES Members(member_id)
+  6  );
+
+Table created.
+
+SQL> INSERT INTO Members VALUES (1, 'praveen',   'CSE', 'Chennai',  '9876541230');
+
+1 row created.
+
+SQL> INSERT INTO Members VALUES (2, 'david',  'ECE', 'Madurai',  '9876541231');
+
+1 row created.
+
+SQL> INSERT INTO Members VALUES (3, 'prasanna',  'IT',  'Trichy',   '9876541232');
+
+1 row created.
+
+SQL> INSERT INTO Members VALUES (4, 'manoj',  'CSE', 'Chennai',  '9876541233');
+
+1 row created.
+
+SQL> INSERT INTO Books VALUES (1, 'Database Concepts',  'prasanna',  'Database',    450);
+
+1 row created.
+
+SQL> INSERT INTO Books VALUES (2, 'Data Mining Basics',  'Hari',      'Data Mining', 500);
+
+1 row created.
+
+SQL> INSERT INTO Books VALUES (3, 'Operating Systems',   'raja',   'OS',          400);
+
+1 row created.
+
+SQL> INSERT INTO Books VALUES (4, 'Advanced DBMS',       'Ramez',    'Database',    600);
+
+1 row created.
+
+SQL> INSERT INTO Borrow VALUES (1, 1, DATE '2024-01-10', DATE '2024-01-20');
+
+1 row created.
+
+SQL> INSERT INTO Borrow VALUES (2, 2, DATE '2024-02-01', DATE '2024-02-15');
+
+1 row created.
+
+SQL> INSERT INTO Borrow VALUES (3, 3, DATE '2024-03-05', DATE '2024-03-20');
+
+1 row created.
+
+SQL> INSERT INTO Borrow VALUES (4, 4, DATE '2024-04-01', DATE '2024-04-10');
+
+1 row created.
+
+SQL> INSERT INTO Staff VALUES (1, 'kavi',   'A', 'Main');
+
+1 row created.
+
+SQL> INSERT INTO Staff VALUES (2, 'Bala',   'C', 'Main');
+
+1 row created.
+
+SQL> INSERT INTO Staff VALUES (3, 'mala', 'B', 'Annex');
+
+1 row created.
+
+SQL> INSERT INTO Staff VALUES (4, 'prince',  'A', 'Main');
+
+1 row created.
+
+SQL> INSERT INTO Fine VALUES (1, 600, 'Paid');
+
+1 row created.
+
+SQL> INSERT INTO Fine VALUES (2, 200, 'Unpaid');
+
+1 row created.
+
+SQL> INSERT INTO Fine VALUES (3, 0,   'Paid');
+
+1 row created.
+
+A. Staff working in building 'A' block or 'C' block (case-insensitive)
+
+SQL> SELECT staff_name
+  2  FROM Staff
+  3  WHERE UPPER(block) IN ('A', 'C');
+
+STAFF_NAME
+-------------------------
+kavi
+Bala
+prince
+
+B. Book details for category 'Database' or 'Data Mining' AND member details where fine > 500
+
+SQL> SELECT b.*
+  2  FROM Books b
+  3  WHERE UPPER(b.category) IN ('DATABASE', 'DATA MINING');
+
+   BOOK_ID BOOK_TITLE
+---------- --------------------------------------------------
+AUTHOR                    CATEGORY                       PRICE
+------------------------- ------------------------- ----------
+         1 Database Concepts
+prasanna                   Database                         450
+
+         2 Data Mining Basics
+Hari                       Data Mining                      500
+
+         4 Advanced DBMS
+Ramez                     Database                         600
+
+
+SQL>
+SQL> SELECT m.*
+  2  FROM Members m
+  3  JOIN Fine f ON m.member_id = f.member_id
+  4  WHERE f.amount > 500;
+
+ MEMBER_ID MEMBER_NAME               DEPT
+---------- ------------------------- -------------------------
+ADDRESS                                            PHONE
+-------------------------------------------------- ---------------
+         1 praveen                   CSE
+Chennai                                            9876541230
+
+C. View — member_id, member_name, and titles of books borrowed
+SQL> CREATE VIEW MemberBorrowedBooks AS
+  2  SELECT m.member_id, m.member_name, b.book_title
+  3  FROM Members m
+  4  JOIN Borrow br ON m.member_id = br.member_id
+  5  JOIN Books  b  ON br.book_id  = b.book_id;
+
+View created.
+
+SQL> SELECT * FROM MemberBorrowedBooks;
+
+ MEMBER_ID MEMBER_NAME
+---------- -------------------------
+BOOK_TITLE
+--------------------------------------------------
+         1 praveen
+Database Concepts
+
+         2 david
+Data Mining Basics
+
+         3 prasanna
+Operating Systems
+
+
+ MEMBER_ID MEMBER_NAME
+---------- -------------------------
+BOOK_TITLE
+--------------------------------------------------
+         4 manoj
+Advanced DBMS
+
+D. Procedure to insert new book details
+
+SQL> CREATE OR REPLACE PROCEDURE insert_book (
+  2      p_book_id    IN INT,
+  3      p_title      IN VARCHAR2,
+  4      p_author     IN VARCHAR2,
+  5      p_category   IN VARCHAR2,
+  6      p_price      IN FLOAT
+  7  )
+  8  AS
+  9  BEGIN
+ 10      INSERT INTO Books (book_id, book_title, author, category, price)
+ 11      VALUES (p_book_id, p_title, p_author, p_category, p_price);
+ 12      COMMIT;
+ 13      DBMS_OUTPUT.PUT_LINE('Book inserted successfully.');
+ 14  END;
+ 15  /
+
+Procedure created.
+
+SQL> EXEC insert_book(6, 'Computer Networks', 'manoj', 'Networks', 520);
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from books;
+
+   BOOK_ID BOOK_TITLE
+---------- --------------------------------------------------
+AUTHOR                    CATEGORY                       PRICE
+------------------------- ------------------------- ----------
+         1 Database Concepts
+prasanna                   Database                         450
+
+         2 Data Mining Basics
+hari                       Data Mining                      500
+
+         3 Operating Systems
+raja                      OS                               400
+
+
+   BOOK_ID BOOK_TITLE
+---------- --------------------------------------------------
+AUTHOR                    CATEGORY                       PRICE
+------------------------- ------------------------- ----------
+         4 Advanced DBMS
+Ramez                     Database                         600
+
+         5 Computer Networks
+Immanuel                  Networks                         520
+
+         6 Computer Networks
+manoj                     Networks                         520
+
+
+6 rows selected.
+
+
+E. Index on member_name for alphabetical quick retrieval
+
+SQL> set timing on;
+SQL> SELECT * FROM Members ORDER BY member_name;
+
+ MEMBER_ID MEMBER_NAME               DEPT
+---------- ------------------------- -------------------------
+ADDRESS                                            PHONE
+-------------------------------------------------- ---------------
+         2 david                     ECE
+Madurai                                            9876541231
+
+         4 manoj                     CSE
+Chennai                                            9876541233
+
+         3 prasanna                  IT
+Trichy                                             9876541232
+
+
+ MEMBER_ID MEMBER_NAME               DEPT
+---------- ------------------------- -------------------------
+ADDRESS                                            PHONE
+-------------------------------------------------- ---------------
+         1 praveen                   CSE
+Chennai                                            9876541230
+
+
+Elapsed: 00:00:00.03
+
+
+SQL> CREATE INDEX idx_member_name ON Members(member_name);
+
+Index created.
+
+
+SQL> set timing on;
+SQL> SELECT * FROM Members ORDER BY member_name;
+
+ MEMBER_ID MEMBER_NAME               DEPT
+---------- ------------------------- -------------------------
+ADDRESS                                            PHONE
+-------------------------------------------------- ---------------
+         2 david                     ECE
+Madurai                                            9876541231
+
+         4 manoj                     CSE
+Chennai                                            9876541233
+
+         3 prasanna                  IT
+Trichy                                             9876541232
+
+
+ MEMBER_ID MEMBER_NAME               DEPT
+---------- ------------------------- -------------------------
+ADDRESS                                            PHONE
+-------------------------------------------------- ---------------
+         1 praveen                   CSE
+Chennai                                            9876541230
+
+
+Elapsed: 00:00:00.00
+
+
+

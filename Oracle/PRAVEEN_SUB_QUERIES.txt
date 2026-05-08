@@ -1,0 +1,353 @@
+1.TO DISPLAY THE USER WHOSE AGE IN MAXIMUM
+
+SQL> select max(age) from users;
+
+  MAX(AGE)
+----------
+        30
+
+SQL> select name,age from users where age=(select max(age) from users);
+
+NAME                                  AGE
+------------------------------ ----------
+yogesh                                 30
+kishore                                30
+
+2.TO FIND THE USERS WHO IS OLDER THAN THE AVERAGE AGE OF ALL USERS.
+
+SQL> select avg(age) from users;
+
+  AVG(AGE)
+----------
+      22.9
+
+SQL> select user_id,name,age from users where age>(select avg(age) from users);
+
+   USER_ID NAME                                  AGE
+---------- ------------------------------ ----------
+        19 yogesh                                 30
+        20 kishore                                30
+        21 jones                                  28
+
+3.TO FIND USERS WHO LIVE IN THE SAME CITIES AS USERS WHO ARE AGED BETWEEN 20 AND 30
+
+SQL> SELECT ADDRESS_CITY FROM USERS WHERE AGE BETWEEN 20 AND 30;
+
+ADDRESS_CITY
+------------------------------
+sivakasi
+VIRUTHUNAGAR
+madurai
+tirunelveli
+tirunelveli
+chennai
+sivakasi
+kovilpatti
+
+8 rows selected.
+
+SQL>  SELECT NAME, ADDRESS_CITY FROM USERS WHERE ADDRESS_CITY IN (SELECT ADDRESS_CITY FROM USERS WHERE AGE BETWEEN 20 AND 30);
+
+NAME                           ADDRESS_CITY
+------------------------------ ------------------------------
+@prasanna                      sivakasi
+kishore                        sivakasi
+@raja                          VIRUTHUNAGAR
+@praveenvirat                  madurai
+@manoj                         madurai
+@prince                        madurai
+@hari                          tirunelveli
+@david                         tirunelveli
+gopesh                         chennai
+yogesh                         chennai
+jones                          kovilpatti
+
+11 rows selected.
+
+4.TO FIND THE USERS WHO LIVE IN THE SAME CITY AS @prince
+
+
+SQL> select address_city from users where name='@prince';
+
+ADDRESS_CITY
+------------------------------
+Madurai
+
+SQL> select name,address_city from users where address_city in(select address_city from users where name='@prince');
+
+NAME                           ADDRESS_CITY
+------------------------------ ------------------------------
+@praveenvirat                  madurai
+@manoj                         madurai
+@prince                        madurai
+
+5.TO FIND THE USERS WHO ARE YOUNGER THAN ANY WHOSE AGE IS GREATER THAN OR EQUAL TO 30
+
+SQL> select age from users where age >=30;
+
+       AGE
+----------
+        30
+        30
+
+
+SQL> select name,age from users where age <any(select age from users where age >=30);
+
+NAME                                  AGE
+------------------------------ ----------
+@praveenvirat                          19
+@prince                                19
+@prasanna                              20
+@david                                 20
+@manoj                                 20
+@hari                                  21
+@raja                                  22
+jones                                  28
+
+8 rows selected.
+
+6.TO FIND USERS WHO ARE YOUNGER THAN ALL USERS WITH AN AGE GREATER THAN 20.
+
+SQL> select age from users where age>20;
+
+       AGE
+----------
+        22
+        21
+        30
+        30
+        28
+
+SQL> select name,age from users where age <all(select age from users where age>20);
+
+NAME                                  AGE
+------------------------------ ----------
+@manoj                                 20
+@prasanna                              20
+@david                                 20
+@prince                                19
+@praveenvirat                          19
+
+SUBQUERY IN THE FROM CLAUSE
+
+7. TO LIST THE TOTAL NUMBER OF CUSTOMERS IN EACH CITY
+
+SQL> SELECT ADDRESS_CITY FROM USERS;
+
+ADDRESS_CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+madurai
+madurai
+tirunelveli
+tirunelveli
+chennai
+sivakasi
+kovilpatti
+VIRUTHUNAGAR
+
+15 rows selected.
+
+SQL> SELECT ADDRESS_CITY, COUNT(*) AS NUM_USERS FROM (SELECT ADDRESS_CITY FROM USERS) C GROUP BY ADDRESS_CITY;
+
+ADDRESS_CITY                    NUM_USERS
+------------------------------ ----------
+madurai                                 3
+sivakasi                                2
+chennai                                 2
+VIRUTHUNAGAR                            2
+tirunelveli                             2
+                                        3
+kovilpatti                              1
+
+7 rows selected.
+
+SUBQUERY IN THE SELECT CLAUSE
+
+8.FOR EACH USERS, DISPLAY THEIR AGE AND THE AVERAGE AGE OF THEIR CITY
+
+
+SQL> select u1.name,u1.age,u1.address_city,(select avg(age) from users u2 group by u2.address_city having u1.address_city=u2.address_city )city_age_avg from users u1;
+
+NAME                                  AGE ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+CITY_AGE_AVG
+------------
+@praveenvirat                          19 madurai
+  19.3333333
+
+@manoj                                 20 madurai
+  19.3333333
+
+@prince                                19 madurai
+  19.3333333
+
+
+NAME                                  AGE ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+CITY_AGE_AVG
+------------
+@prasanna                              20 sivakasi
+          25
+
+kishore                                30 sivakasi
+          25
+
+gopesh                                    chennai
+          30
+
+
+NAME                                  AGE ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+CITY_AGE_AVG
+------------
+yogesh                                 30 chennai
+          30
+
+@raja                                  22 VIRUTHUNAGAR
+          22
+
+sakthi                                    VIRUTHUNAGAR
+          22
+
+
+NAME                                  AGE ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+CITY_AGE_AVG
+------------
+@hari                                  21 tirunelveli
+        20.5
+
+@david                                 20 tirunelveli
+        20.5
+
+jones                                  28 kovilpatti
+          28
+
+15 rows selected.
+
+
+SUBQUERY IN THE HAVING CLAUSE
+
+9. FIND CITIES WHERE THE AVERAGE AGE OF CUSTOMERS IS GREATER THAN THE TOTAL AVERAGE
+
+SQL> select avg(age) ,address_city from users group by address_city having avg(age)>(select avg(age) from users);
+
+  AVG(AGE) ADDRESS_CITY
+---------- ------------------------------
+        25 sivakasi
+        30 chennai
+        28 kovilpatti
+
+10.FIND CUSTOMERS WHO LIVE IN THE SAME CITY AS ANY OTHER CUSTOMER.
+
+SQL> select c1.name, c1.address_city from users c1 where exists (select 1 from users c2 where c1.address_city = c2.address_city and c1.name != c2.name);
+
+NAME                           ADDRESS_CITY
+------------------------------ ------------------------------
+@manoj                         madurai
+@prince                        madurai
+kishore                        sivakasi
+yogesh                         chennai
+sakthi                         VIRUTHUNAGAR
+@praveenvirat                  madurai
+@david                         tirunelveli
+@hari                          tirunelveli
+gopesh                         chennai
+@prasanna                      sivakasi
+@raja                          VIRUTHUNAGAR
+
+11 rows selected.
+
+11.FIND THE CUSTOMER WHO DO NOT HAVE TRAINER
+
+SQL> SELECT c.NAME AS CUSTOMER_NAME, c.CITY, c.FITNESS_LEVEL
+  2  FROM customer c
+  3  WHERE NOT EXISTS (
+  4      SELECT 1
+  5      FROM trainer t
+  6      JOIN users tu ON t.USER_ID = tu.USER_ID
+  7      WHERE tu.NAME = c.TRAINER_NAME );
+
+CUSTOMER_NAME        CITY                 FITNESS_LEVEL
+-------------------- -------------------- --------------------
+@hari                tirunelveli          Intermediate
+gopesh               chennai              beginner
+
+
+12.TO FIND THE AVERAGE AGE OF CUSTOMERS AND THEN FIND CUSTOMERS WHOSE AGE IS ABOVE THE AVERAGE.
+
+SQL> WITH AvgAge AS (SELECT AVG(AGE) AS avg_age FROM USERS) SELECT NAME, AGE FROM USERS WHERE AGE > (SELECT avg_age FROM AvgAge);
+
+NAME                                  AGE
+------------------------------ ----------
+yogesh                                 30
+kishore                                30
+jones                                  28
+
+13.TO DISPLAY CUSTOMERS WHOSE AGE IS ABOVE THE AVERAGE AND WHO LIVE IN A CITY WITH MORE THAN 2 CUSTOMERS
+ 
+SQL>  WITH AvgAge AS (
+  2       SELECT AVG(AGE) AS avg_age
+  3       FROM USERS
+  4     ),
+  5     CityCount AS (
+  6       SELECT ADDRESS_CITY, COUNT(*) AS city_count
+  7       FROM USERS
+  8       GROUP BY ADDRESS_CITY
+  9     )
+ 10     SELECT C1.NAME, C1.AGE, C2.ADDRESS_CITY, C2.city_count
+ 11     FROM USERS C1
+ 12     JOIN CityCount C2 ON C1.ADDRESS_CITY = C2.ADDRESS_CITY
+ 13     WHERE C1.AGE < (SELECT avg_age FROM AvgAge)
+ 14     AND C2.city_count > 2;
+
+NAME                                  AGE ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+CITY_COUNT
+----------
+@praveenvirat                          19 madurai
+         3
+
+@manoj                                 20 madurai
+         3
+
+@prince                                19 madurai
+         3
+
+USING SCALAR SUBQUERY IN SELECT
+
+14.FETCH A LIST OF CUSTOMER NAMES AND THEIR TRAINER NAMES, BUT ONLY FOR CUSTOMERS
+ WHO LIVE IN A SPECIFIC CITY, LIKE MADURAI
+
+SQL> SELECT NAME, (SELECT TRAINER_NAME FROM CUSTOMER C2 WHERE C2.NAME=C1.NAME),CITY AS TRAINER_NAME FROM CUSTOMER C1 WHERE CITY = 'madurai';
+
+NAME                 (SELECTTRAINER_NAMEF TRAINER_NAME
+-------------------- -------------------- --------------------
+@praveenvirat        @raja                madurai
+@manoj               kishore              madurai
+@prince              jones                madurai
+
+15.USING SCALAR SUBQUERY IN WHERE CLAUSE TO COMPARE AGES
+
+SQL> SELECT NAME,AGE FROM USERS WHERE AGE > (SELECT AVG(AGE) FROM USERS);
+
+NAME                                  AGE
+------------------------------ ----------
+yogesh                                 30
+kishore                                30
+jones                                  28
+
+
+
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,964 @@
+_____________SET OPERATIONS____________
+
+UNION
+1.TO DISPLAY ALL USER_ID ROWS IN USERS AND LOGIN
+
+SQL> select user_id from users union select user_id from login;
+
+   USER_ID
+----------
+         1
+         2
+         3
+        11
+        12
+        13
+        14
+        15
+        16
+        17
+        18
+
+11 rows selected.
+
+2.DISPLAY ALL THE NAME IN USERS AND USERNAME IN LOGIN
+
+SQL> select name from users union select username from login;
+
+NAME
+------------------------------
+praveen
+prasanna
+gopesh
+rajayoken
+manoj
+prince
+david
+hari
+
+@praveenvirat
+@prasanna
+
+NAME
+------------------------------
+@hari
+@david
+@raja
+@manoj
+@prince
+
+16 rows selected.
+
+3.TO DIPLAY ERROR FOR USING UNION ON DIFFERENT DATATYPE COLUMNS
+
+SQL> select name from users union select user_id from login;
+select name from users union select user_id from login
+       *
+ERROR at line 1:
+ORA-01790: expression must have same datatype as corresponding expression
+
+INTERSECTION
+
+4.TO DISPLAY COMMOM USER_ID ROWS IN USERS AND LOGIN
+
+SQL> select user_id from users intersect select user_id from login;
+
+   USER_ID
+----------
+        18
+        17
+        13
+        12
+        16
+        15
+        14
+
+7 rows selected.
+
+5.TO DISPLAY COMMON NAME FROM USERS AND USERNAME FROM LOGIN
+
+SQL> select name from users intersect select username from login;
+
+no rows selected
+
+6.TO DISPLAY ERROR FOR INTERSECTING TWO DIFFERENT DATATYPE COLUMN
+
+
+SQL> select name from users intersect select user_ID from login;
+select name from users intersect select user_ID from login
+       *
+ERROR at line 1:
+ORA-01790: expression must have same datatype as corresponding expression
+
+UNION ALL
+
+7.TO DISPLAY ALL USER_ID ROWS IN USERS AND LOGIN INCLUDE DUPLICATES
+
+SQL> select user_id from users union all select  user_id from login;
+
+   USER_ID
+----------
+         1
+         2
+         3
+        11
+        12
+        13
+        14
+        15
+        16
+        17
+        18
+
+   USER_ID
+----------
+        18
+        17
+        13
+        12
+        16
+        15
+        14
+
+18 rows selected.
+
+
+8.DISPLAY ALL THE NAME IN USERS AND USERNAME IN LOGIN INCLUDING DUPLICATES
+
+SQL> select name from users union all select  username from login;
+
+NAME
+------------------------------
+praveen
+prasanna
+gopesh
+rajayoken
+manoj
+prince
+david
+hari
+
+
+
+
+NAME
+------------------------------
+@praveenvirat
+@prasanna
+@hari
+@david
+@raja
+@manoj
+@prince
+
+18 rows selected.
+
+9.TO DIPLAY ERROR FOR USING UNION ALL ON DIFFERENT DATATYPE COLUMNS
+
+SQL> select name from users union all select user_ID from login;
+select name from users union all select user_ID from login
+       *
+ERROR at line 1:
+ORA-01790: expression must have same datatype as corresponding expression
+
+MINUS
+
+
+10.TO DELETE NAME OF THE RECORD WHOSE NAME OF USERS EQUAL TO USERNAME OF LOGIN 
+
+SQL> select name from users MINUS select  username from login;
+
+NAME
+------------------------------
+praveen
+prasanna
+gopesh
+rajayoken
+manoj
+prince
+david
+hari
+
+
+9 rows selected.
+
+11.TO DELETE ALL THE RECORD WHOSE USER_ID OF USERS EQUAL TO USER_ID OF LOGIN
+
+SQL> select user_id from users MINUS select  user_id from login;
+
+   USER_ID
+----------
+         1
+         2
+         3
+        11
+
+12.TO DELETE ALL THE RECORD WHOSE USER_ID OF LOGIN EQUAL TO USER_ID OF USERS
+
+SQL> select user_id from LOGIN MINUS select  user_id from USERS;
+
+no rows selected
+
+EXCEPT
+
+13.TO DELETE ALL THE RECORD WHOSE USER_ID OF USERS EQUAL TO USER_ID OF LOGIN
+
+SQL> select user_id from users EXCEPT select  user_id from login;
+
+   USER_ID
+----------
+         1
+         2
+         3
+        11
+
+14.TO DELETE ALL THE RECORD WHOSE USER_ID OF LOGIN EQUAL TO USER_ID OF USERS
+
+SQL> select user_id from LOGIN EXCEPT select  user_id from USERS;
+
+no rows selected
+
+__________JOIN QUERIES___________
+CARTESIAN PRODUCT
+COMBINING EVERY ROW FROM THE FIRST TABLE WITH EVERY ROW FROM THE SECOND TABLE
+
+15.TO DISPLAY CARTESIAN PRODUCT FOR USERS AND LOGIN
+
+SQL> select * from users,login;
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        11
+chennai
+                                          gopesh
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+T-nagar                        customer   manoj
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        14         19 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        13         21 03-MAR-05 david@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   david
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+virat@18 @praveenvirat                18
+
+
+  
+77 rows selected.
+
+16.TO DISPLAY ONLY NAME AND USRNAME FROM TABLE USES AND LOGIN
+
+SQL> select users.name,login.username from users,login;
+
+NAME                           USERNAME
+------------------------------ --------------------
+praveen                        @praveenvirat
+prasanna                       @praveenvirat
+gopesh                         @praveenvirat
+rajayoken                      @praveenvirat
+manoj                          @praveenvirat
+prince                         @praveenvirat
+david                          @praveenvirat
+hari                           @praveenvirat
+                               @praveenvirat
+                               @praveenvirat
+                               @praveenvirat
+
+NAME                           USERNAME
+------------------------------ --------------------
+praveen                        @prasanna
+prasanna                       @prasanna
+gopesh                         @prasanna
+rajayoken                      @prasanna
+manoj                          @prasanna
+prince                         @prasanna
+david                          @prasanna
+hari                           @prasanna
+                               @prasanna
+                               @prasanna
+                               @prasanna
+
+NAME                           USERNAME
+------------------------------ --------------------
+praveen                        @hari
+prasanna                       @hari
+gopesh                         @hari
+rajayoken                      @hari
+manoj                          @hari
+prince                         @hari
+david                          @hari
+hari                           @hari
+                               @hari
+                               @hari
+                               @hari
+
+
+77 rows selected.
+
+17.TO DISPLAY ONLY NAME AND USRNAME FROM TABLE USES AND LOGIN USING CROSS JOIN
+
+SQL> select users.name,login.username from users cross join login;
+
+
+
+NAME                           USERNAME
+------------------------------ --------------------
+praveen                        @praveenvirat
+prasanna                       @praveenvirat
+gopesh                         @praveenvirat
+rajayoken                      @praveenvirat
+manoj                          @praveenvirat
+prince                         @praveenvirat
+david                          @praveenvirat
+hari                           @praveenvirat
+                               @praveenvirat
+                               @praveenvirat
+                               @praveenvirat
+
+NAME                           USERNAME
+------------------------------ --------------------
+praveen                        @prasanna
+prasanna                       @prasanna
+gopesh                         @prasanna
+rajayoken                      @prasanna
+manoj                          @prasanna
+prince                         @prasanna
+david                          @prasanna
+hari                           @prasanna
+                               @prasanna
+                               @prasanna
+                               @prasanna
+
+
+
+77 rows selected.
+
+18.TO DISPLAY TAINER ID, USERID ,USERNAME FROM USERS,LOGIN,TRAINER
+
+SQL> select t.t_id,u.user_id,l.username from users u cross join login l cross join trainer t;
+
+      T_ID    USER_ID USERNAME
+---------- ---------- --------------------
+       101          1 @praveenvirat
+       101          2 @praveenvirat
+       101          3 @praveenvirat
+       101         11 @praveenvirat
+       101         12 @praveenvirat
+       101         13 @praveenvirat
+       101         14 @praveenvirat
+       101         15 @praveenvirat
+       101         16 @praveenvirat
+       101         17 @praveenvirat
+       101         18 @praveenvirat
+
+      T_ID    USER_ID USERNAME
+---------- ---------- --------------------
+       101         19 @praveenvirat
+       101         20 @praveenvirat
+       101         21 @praveenvirat
+       101          1 @prasanna
+       101          2 @prasanna
+       101          3 @prasanna
+       101         11 @prasanna
+       101         12 @prasanna
+       101         13 @prasanna
+       101         14 @prasanna
+       101         15 @prasanna
+
+      T_ID    USER_ID USERNAME
+---------- ---------- --------------------
+       101         16 @prasanna
+       101         17 @prasanna
+       101         18 @prasanna
+       101         19 @prasanna
+       101         20 @prasanna
+       101         21 @prasanna
+       101          1 @hari
+       101          2 @hari
+       101          3 @hari
+       101         11 @hari
+       101         12 @hari
+
+      T_ID    USER_ID USERNAME
+---------- ---------- --------------------
+       101         13 @hari
+       101         14 @hari
+       101         15 @hari
+       101         16 @hari
+       101         17 @hari
+       101         18 @hari
+       101         19 @hari
+       101         20 @hari
+       101         21 @hari
+       101          1 @david
+       101          2 @david
+
+      T_ID    USER_ID USERNAME
+---------- ---------- --------------------
+       101          3 @david
+       101         11 @david
+       101         12 @david
+       101         13 @david
+       101         14 @david
+       101         15 @david
+       101         16 @david
+       101         17 @david
+       101         18 @david
+       101         19 @david
+       101         20 @david
+392 rows selected.
+
+19.TO DISPLAY ONLY NAME FORM USERS WHOSE USE_ID IS EQUAL TO USER_ID OF LOGIN
+
+SQL> select u.name from users u,login l where u.user_id=l.user_id;
+
+NAME
+------------------------------
+praveen
+prasanna
+rajayoken
+manoj
+prince
+david
+hari
+
+7 rows selected.
+
+
+NATURAL JOIN
+
+20.TO DIAPLAY NATURAL JOIN OF USERS AND LOGIN
+
+SQL> select * from users natural join login;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+virat@18 @praveenvirat
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+prasanna @prasanna
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+rajayoke @raja
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+T-nagar                        customer   manoj
+mathuman @manoj
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        14         19 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+davidpri @prince
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        13         21 03-MAR-05 david@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   david
+harihara @hari
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME
+-------- --------------------
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+davidimm @david
+
+
+7 rows selected.
+
+20.TO DISPLAY ONLY NAME FROM USER WITH NATURAL JOIN BETWEEN USER AND LOGIN
+
+SQL> select name from users natural join login;
+
+NAME
+------------------------------
+praveen
+prasanna
+rajayoken
+manoj
+prince
+david
+hari
+
+7 rows selected.
+
+21.TO DISPLAY NATURAL JOIN BETWEEN LOGIN AND EXERCISE(NO COMMON COLUMN SO NATURAL JOIN ACT AS CARTESIAN PRODUCT)
+
+SQL> select * from login natural join EXERCISE;
+
+PASSWORD USERNAME                USER_ID      EX_ID EX_NAME
+-------- -------------------- ---------- ---------- --------------------
+MUSCLE_GRP           NO_OF_SETS REPITITIONS   DURATION   CAL_BURN
+-------------------- ---------- ----------- ---------- ----------
+virat@18 @praveenvirat                18          1 Push Up
+Chest                         3          10         30     50.824
+
+prasanna @prasanna                    17          1 Push Up
+Chest                         3          10         30     50.824
+
+harihara @hari                        13          1 Push Up
+Chest                         3          10         30     50.824
+
+
+PASSWORD USERNAME                USER_ID      EX_ID EX_NAME
+-------- -------------------- ---------- ---------- --------------------
+MUSCLE_GRP           NO_OF_SETS REPITITIONS   DURATION   CAL_BURN
+-------------------- ---------- ----------- ---------- ----------
+davidimm @david                       12          1 Push Up
+Chest                         3          10         30     50.824
+
+rajayoke @raja                        16          1 Push Up
+Chest                         3          10         30     50.824
+
+mathuman @manoj                       15          1 Push Up
+Chest                         3          10         30     50.824
+
+
+PASSWORD USERNAME                USER_ID      EX_ID EX_NAME
+-------- -------------------- ---------- ---------- --------------------
+MUSCLE_GRP           NO_OF_SETS REPITITIONS   DURATION   CAL_BURN
+-------------------- ---------- ----------- ---------- ----------
+davidpri @prince                      14          1 Push Up
+Chest                         3          10         30     50.824
+
+virat@18 @praveenvirat                18          2 Squat
+Legs                          4          12         45     80.324
+
+prasanna @prasanna                    17          2 Squat
+Legs                          4          12         45     80.324
+
+
+
+56 rows selected.
+
+
+OUTER JOINS
+
+
+23.TO DIAPLAY name,age,username LEFT OUTER JOIN FOR USERS WITH LOGIN BASED ON USER_ID
+
+SQL> select name,age,username from users u left outer join login l on u.user_id=l.user_id;
+
+NAME                                  AGE USERNAME
+------------------------------ ---------- --------------------
+praveen                                19 @praveenvirat
+prasanna                               20 @prasanna
+david                                  21 @hari
+hari                                   20 @david
+rajayoken                              22 @raja
+manoj                                  20 @manoj
+prince                                 19 @prince
+
+gopesh
+
+
+
+11 rows selected.
+
+
+25.TO DIAPLAY name,age,username RIGHT OUTER JOIN FOR USERS WITH LOGIN BASED ON USER_ID
+
+SQL> select name,age,username from users u right outer join login l on u.user_id=l.user_id;
+
+NAME                                  AGE USERNAME
+------------------------------ ---------- --------------------
+praveen                                19 @praveenvirat
+prasanna                               20 @prasanna
+rajayoken                              22 @raja
+manoj                                  20 @manoj
+prince                                 19 @prince
+                                       21 @david
+hari                                   20 @hari
+
+7 rows selected
+
+
+
+
+
+11 rows selected.
+
+27.TO DIAPLAY name,age,username full OUTER JOIN FOR USERS WITH LOGIN BASED ON USER_ID
+
+SQL> select name,age,username from users u full outer join login l on u.user_id=l.user_id;
+
+NAME                                  AGE USERNAME
+------------------------------ ---------- --------------------
+praveen                                19 @praveenvirat
+prasanna                               20 @prasanna
+gopesh
+rajayoken                              22 @raja
+manoj                                  20 @manoj
+prince                                 19 @prince
+hari                                   21 @hari
+                                       20 @david
+
+
+
+
+11 rows selected.
+
+  
+28.TO DISPLAY ALL THE RECORDS FROM USERS AND LOGIN WHOSE USER_ID OF USERS EQUAL TO USER_ID OF LOGIN AND USERNAME EQUAL TO NAME
+
+SQL> select * from users u join login l on u.user_id=l.user_id and name=username;
+
+no rows selected
+
+29.TO DISPLAY ALL THE RECORDS FROM USERS AND LOGIN WHOSE USER_ID OF USERS EQUAL TO USER_ID OF LOGIN OR USERNAME EQUAL TO NAME
+
+SQL> select * from users u join login l on u.user_id=l.user_id or name=username;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+virat@18 @praveenvirat                18
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+prasanna @prasanna                    17
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        13         21 03-MAR-05 david@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   david
+harihara @hari                        13
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+davidimm @david                       12
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+rajayoke @raja                        16
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+T-nagar                        customer   manoj
+mathuman @manoj                       15
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+        14         19 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+davidpri @prince                      14
+
+
+7 rows selected.
+
+
+SELF JOIN
+
+30.SQL> SELECT t.T_ID AS TRAINER_ID,t.QUALIFICATION AS TRAINER_QUAL,t.EXPERIENCE AS TRAINER_EXP,h.T_ID AS HEAD_ID,
+ h.QUALIFICATION AS HEAD_QUAL,h.EXPERIENCE AS HEAD_EXP FROM trainer t LEFT JOIN trainer h ON t.HEAD_ID = h.T_ID
+ ORDER BY t.T_ID;
+
+TRAINER_ID TRAINER_QUAL                        TRAINER_EXP    HEAD_ID
+---------- ----------------------------------- ----------- ----------
+HEAD_QUAL                             HEAD_EXP
+----------------------------------- ----------
+       101 M.Sc. Sports Science                         12
+
+
+       102 M.Sc.phsical education                       12        101
+M.Sc. Sports Science                        12
+
+       103 MBA Fitness Management                       12        101
+M.Sc. Sports Science                        12
+
+
+TRAINER_ID TRAINER_QUAL                        TRAINER_EXP    HEAD_ID
+---------- ----------------------------------- ----------- ----------
+HEAD_QUAL                             HEAD_EXP
+----------------------------------- ----------
+       104 Diploma Yoga Instructor                       9        101
+M.Sc. Sports Science                        12
+
+31.TO SHOW THE CUSTOMER ALONG WITH THEIR AGE AND TRAINER ID
+
+SQL> select c.name,u.age,t.t_id from customer c join users u  on c.user_id=u.user_id join trainer t on c.trainer_name=t.name;
+
+NAME                        AGE       T_ID
+-------------------- ---------- ----------
+@praveen                     19        101
+@prasanna                    20        102
+@manoj                       20        103
+@prince                      19        104
+@david                       20        104
+kohli                                  101
+
+6 rows selected.
+
+32.TO SHOW AGE OF CUSTOMERS(BY 'USING' KEYWORD)
+
+SQL> select c.name,u.age from customer c join users u using (user_id);
+
+NAME                        AGE
+-------------------- ----------
+@praveen                     19
+@prasanna                    20
+gopesh
+@manoj                       20
+@prince                      19
+@hari                        21
+@david                       20
+kohli
+
+8 rows selected.
+
+33.NON EQUI JOIN ON USER_ID
+
+SQL>  select u.name from users u join customer c on u.user_id!=c.user_id and u.name like '@p%';
+
+NAME
+---------------
+@praveenvirat
+@praveenvirat
+@praveenvirat
+@praveenvirat
+@praveenvirat
+@praveenvirat
+@praveenvirat
+@prasanna
+@prasanna
+@prasanna
+@prasanna
+
+NAME
+---------------
+@prasanna
+@prasanna
+@prasanna
+@prince
+@prince
+@prince
+@prince
+@prince
+@prince
+@prince
+
+21 rows selected.

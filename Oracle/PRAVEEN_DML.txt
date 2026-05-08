@@ -1,0 +1,1927 @@
+PRAVEEN_DML
+
+____________________________INSERT_____________________________________
+
+1.TO INSERT A NEW ROW TO USERS TABLE
+
+SQL> insert into users values(18,18,to_date('17-11-2006','dd-mm-yyyy'),'virat18@gmail.com','madurai','TN','koodalnagar','customer','praveen');
+
+1 row created.`
+
+2.SQL> insert into users values(17,18,to_date('12-01-2006','dd-mm-yyyy'),'prasanna@gmail.com','sivakasi','TN','nagar','customer','prasanna');
+
+1 row created.
+
+3.SQL> insert into users values(16,20,to_date('12-01-2004','dd-mm-yyyy'),'YOKEN@gmail.com','VIRUTHUNAGAR','TN','nagar','trainer','rajayoken');
+
+1 row created.
+
+4.SQL> insert into users values(16,20,to_date('12-01-2004','dd-mm-yyyy'),'YOKEN@gmail.com','VIRUTHUNAGAR','TN','nagar','trainer','rajayoken');
+insert into users values(16,20,to_date('12-01-2004','dd-mm-yyyy'),'YOKEN@gmail.com','VIRUTHUNAGAR','TN','nagar','trainer','rajayoken')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C008921) violated
+
+5.SQL> desc exercise;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EX_ID                                     NOT NULL NUMBER(38)
+ EX_NAME                                            VARCHAR2(20)
+ MUSCLE_GRP                                         VARCHAR2(20)
+ NO_OF_SETS                                         NUMBER(38)
+ REPITITIONS                                        NUMBER(38)
+ DURATION                                           NUMBER(38)
+ CAL_BURN                                           FLOAT(126)
+
+6.TO INSERT MULTIPLE ROWS TO TABLE EXERCISE
+
+SQL>  INSERT ALL
+  2        INTO exercise (ex_id,repititions,cal_burn) VALUES (6,2,50.098)
+  3        INTO exercise(ex_id,repititions,cal_burn) VALUES (7,3,54.003)
+  4      INTO exercise(ex_id,repititions,cal_burn) VALUES (8,2,65.456)
+  5      select * from dual;
+
+3 rows created.
+
+7.TO DISPLAY THE ROWS IN USERS
+
+SQL> select * from users;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        18         18 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+
+        17         18 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+
+        16         20 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+
+        15         18 03-MAR-06 manoj@gmail.com
+madurai                        TN
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+T-nagar                        customer   manoj
+
+        14         18 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+
+        13         19 03-MAR-05 david@gmail.com
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+tirunelveli                    TN
+G-nagar                        customer   david
+
+        12         18 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+
+
+7 rows selected.
+
+ 
+
+8.TO INSERT VALUES IN LOGIN
+
+SQL> insert into login values('virat@18','praveen',11);
+insert into login values('virat@18','praveen',11)
+*
+ERROR at line 1:
+ORA-02290: check constraint (SYSTEM.SYS_C008995) violated
+
+9.SQL> insert into login values('virat@18','@praveen',18);
+
+1 row created.
+
+10.SQL> insert into login values('prasann','@prasanna',17);
+
+1 row created.
+
+SQL> insert into login values('rajayoke','@raja',16);
+
+1 row created.
+
+11.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveen                     18
+prasann  @prasanna                    17
+rajayoke @raja                        16
+
+12.TO INSERT THE VALUES OF LOGIN TO LOGIN_COPY
+
+SQL> create table login_copy as select * from login;
+
+Table created.
+
+13.SQL> desc login_copy;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PASSWORD                                           VARCHAR2(8)
+ USERNAME                                           VARCHAR2(20)
+ USER_ID                                            NUMBER(38)
+
+14.SQL> insert into users(user_id,address_city,name) values(11,'chennai','gopesh');
+
+1 row created.
+
+_____________________________DELETE_____________________________
+
+15.TO DELETE ALL THE ROWS IN LOGIN_COPY
+
+SQL> delete from login_copy;
+
+3 rows deleted.
+
+16.TO DELETE ROW USINS CONDITION
+
+SQL> delete from users where user_id=16;
+delete from users where user_id=16
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (SYSTEM.C7) violated - child record found
+
+
+17.SQL> delete from login where user_id=16;
+
+1 row deleted.
+
+18.SQL> delete from users where name like 'rajayoken';
+
+1 row deleted.
+19.SQL> select * from users;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        18         18 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+
+        17         18 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+
+
+20.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveen                     18
+prasanna @prasanna                    17
+davidimm @david                       13
+harihara @hari                        12
+rajayoke @raja                        16
+mathuman @manoj                       15
+davidpri @prince                      14
+
+7 rows selected.
+
+21.SQL> delete from login where username like '@d%';
+
+1 row deleted.
+
+22.SQL> delete from users where address_city like 'tirunelveli' and age>=19;
+
+1 row deleted.
+
+23.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveen                     18
+prasanna @prasanna                    17
+rajayoke @raja                        16
+madhuman @manoj                       15
+davidpri @prince                      14
+davidimm @david                       12
+harihara @hari                        13
+
+7 rows selected.
+
+
+2.SQL> delete from login where password='mathuman' or user_id<15;
+
+3 rows deleted.
+
+25.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveen                     18
+prasanna @prasanna                    17
+rajayoke @raja                        16
+madhuman @manoj                       15
+
+
+_________________________________________UPDATE_______________________________________________
+
+26.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveen                     18
+prasanna @prasanna                    17
+harihara @hari                        13
+davidimm @david                       12
+rajayoke @raja                        16
+mathuman @manoj                       15
+davidpri @prince                      14
+
+7 rows selected.
+
+27.SQL> update login set username='@praveenvirat' where user_id=18;
+
+1 row updated.
+
+28.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveenvirat                18
+prasanna @prasanna                    17
+harihara @hari                        13
+davidimm @david                       12
+rajayoke @raja                        16
+mathuman @manoj                       15
+davidpri @prince                      14
+
+7 rows selected.
+
+29.SQL> update users set age=(sysdate-DOB)/365;
+
+7 rows updated.
+
+30.SQL> select * from users;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+T-nagar                        customer   manoj
+
+        14         19 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+
+        13         21 03-MAR-05 david@gmail.com
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+tirunelveli                    TN
+G-nagar                        customer   david
+
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+
+
+7 rows selected.
+
+32.SQL> update users set user_id=18 where user_id=17;
+update users set user_id=18 where user_id=17
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C008921) violated
+
+
+
+____________________________SELECT STRING FUNCTION_______________________________________
+
+33.SELECT ALL ROWS ALL COULUMNS
+SQL> select * from users;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+
+        11
+chennai
+                                          gopesh
+
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+nagar                          trainer    rajayoken
+
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+T-nagar                        customer   manoj
+
+        14         19 03-MAR-07 prince@gmail.com
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+madurai                        TN
+T-nagar                        customer   prince
+
+        13         21 03-MAR-05 david@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   david
+
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+
+
+8 rows selected.
+
+34.SQL> select * from login;
+
+PASSWORD USERNAME                USER_ID
+-------- -------------------- ----------
+virat@18 @praveenvirat                18
+prasanna @prasanna                    17
+harihara @hari                        13
+davidimm @david                       12
+rajayoke @raja                        16
+mathuman @manoj                       15
+davidpri @prince                      14
+
+7 rows selected.
+
+2.SELECT FEW COULUMNS
+
+35.SQL> select user_id,name from users;
+
+   USER_ID NAME
+---------- ------------------------------
+        18 praveen
+        17 prasanna
+        11 gopesh
+        16 rajayoken
+        15 manoj
+        14 prince
+        13 david
+        12 hari
+
+8 rows selected.
+
+36.SELECT UNIQUE COLUMN VALUES
+
+SQL> select distinct(address_city) from users;
+
+ADDRESS_CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+Tirunelveli
+
+37.RENAME COLUMNS WHILE DISPLAY
+
+SQL> select address_city as city from users;
+
+CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+madurai
+madurai
+tirunelveli
+tirunelveli
+
+8 rows selected.
+
+38.ARITHMENTIC OPERATIONS WITH COLUMNS OF NUMBER DOMAINS
+
+SQL> select age+10 from users;
+
+    AGE+10
+----------
+        29
+        30
+
+        32
+        30
+        29
+        31
+        30
+
+8 rows selected.
+
+39.SELECT WITH CONDITIONS
+
+SQL> select name from users where user_id>=15;
+
+NAME
+------------------------------
+praveen
+prasanna
+rajayoken
+manoj
+
+40.SQL> select name from users where user_id<>15;
+
+NAME
+------------------------------
+praveen
+prasanna
+gopesh
+rajayoken
+prince
+david
+hari
+
+7 rows selected.
+
+41.SQL> select name,user_id,address_city from users where address_city in ('madurai','sivakasi');
+
+NAME                              USER_ID ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+praveen                                18 madurai
+prasanna                               17 sivakasi
+manoj                                  15 madurai
+prince                                 14 madurai
+
+42.SQL> select name,user_id,age from users where age between 19 and 20;
+
+NAME                              USER_ID        AGE
+------------------------------ ---------- ----------
+praveen                                18         19
+prasanna                               17         20
+manoj                                  15         20
+prince                                 14         19
+hari                                   12         20
+
+43.SQL> select name,user_id,address_city from users where address_city  not in ('madurai','sivakasi');
+
+NAME                              USER_ID ADDRESS_CITY
+------------------------------ ---------- ------------------------------
+gopesh                                 11 chennai
+rajayoken                              16 VIRUTHUNAGAR
+david                                  13 tirunelveli
+hari                                   12 tirunelveli
+
+44.like operator
+
+SQL> select username,user_id from login where username like '@p%';
+
+USERNAME                USER_ID
+-------------------- ----------
+@praveenvirat                18
+@prasanna                    17
+@prince                      14
+
+45.SQL> select username,user_id from login where username like '_______';
+
+USERNAME                USER_ID
+-------------------- ----------
+@prince                      14
+
+46.SQL> select username,user_id from login where username not like '@d%';
+
+USERNAME                USER_ID
+-------------------- ----------
+@praveenvirat                18
+@prasanna                    17
+@hari                        13
+@raja                        16
+@manoj                       15
+@prince                      14
+
+
+47.NULL OPERATOR
+
+SQL> select * from users where DOB is null;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        11
+chennai
+                                          gopesh
+48.NOT NULL OPERATOR
+
+SQL> select * from users where DOB is not null;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   praveen
+
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   prasanna
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+
+        16         22 12-JAN-04 YOKEN@gmail.com
+VIRUTHUNAGAR                   TN
+nagar                          trainer    rajayoken
+
+        15         20 03-MAR-06 manoj@gmail.com
+madurai                        TN
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+T-nagar                        customer   manoj
+
+        14         19 03-MAR-07 prince@gmail.com
+madurai                        TN
+T-nagar                        customer   prince
+
+        13         21 03-MAR-05 david@gmail.com
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ------------------------------
+tirunelveli                    TN
+G-nagar                        customer   david
+
+        12         20 03-APR-06 hari@gmail.com
+tirunelveli                    TN
+G-nagar                        customer   hari
+
+
+7 rows selected.
+
+
+
+49.CHAR FUNCTIONS
+
+SQL> select upper(name),lower(name),initcap(name) from users where user_id=18;
+
+UPPER(NAME)                    LOWER(NAME)
+------------------------------ ------------------------------
+INITCAP(NAME)
+------------------------------
+PRAVEEN                        praveen
+Praveen
+
+50.CONCATENATION
+
+SQL> select 'dr.'||username from login;
+
+'DR.'||USERNAME
+-----------------------
+dr.@praveenvirat
+dr.@prasanna
+dr.@hari
+dr.@david
+dr.@raja
+dr.@manoj
+dr.@prince
+
+7 rows selected.
+
+51.SQL> select concat('mr.',name) from users where user_id>15;
+
+CONCAT('MR.',NAME)
+---------------------------------
+mr.praveen
+mr.prasanna
+mr.rajayoken
+
+52.SUBSTRING
+
+SQL> select substr(name,3,5) from users;
+
+SUBSTR(NAME,3,5)
+--------------------
+aveen
+asann
+pesh
+jayok
+noj
+ince
+vid
+ri
+
+8 rows selected.
+
+53.SQL> select concat('user-',concat('mr.',name)) from users where user_id>15;
+
+CONCAT('USER-',CONCAT('MR.',NAME))
+--------------------------------------
+user-mr.praveen
+user-mr.prasanna
+user-mr.rajayoken
+
+54.LENGHT
+
+SQL> select name,length(name) from users where user_id=18;
+
+NAME                           LENGTH(NAME)
+------------------------------ ------------
+praveen                                   7
+
+55.INSTRING
+
+SQL> select name,instr(name,'r') from users;
+
+NAME                           INSTR(NAME,'R')
+------------------------------ ---------------
+praveen                                      2
+prasanna                                     2
+gopesh                                       0
+rajayoken                                    1
+manoj                                        0
+prince                                       2
+david                                        0
+hari                                         3
+
+8 rows selected.
+
+56.TRIM
+
+SQL> select ltrim('  virat  '),rtrim('  virat  '),trim('  virat  ') from dual;
+
+LTRIM(' RTRIM(' TRIM(
+------- ------- -----
+virat     virat virat
+
+57.REPLACE
+
+SQL> select name,replace(name,'a','ei') as updated_name from users where user_id=18;
+
+NAME
+------------------------------
+UPDATED_NAME
+------------------------------------------------------------
+praveen
+preiveen
+
+58.ASCII
+
+SQL> select ascii(name) from users where USER_ID>15;
+
+ASCII(NAME)
+-----------
+        112
+        112
+        114
+
+_______________________SELECT NUMBER FUNCTION______________________
+
+59.SQL> SELECT * from exercise;
+
+     EX_ID EX_NAME              MUSCLE_GRP           NO_OF_SETS REPITITIONS
+---------- -------------------- -------------------- ---------- -----------
+  DURATION   CAL_BURN
+---------- ----------
+         1 Push Up              Chest                         3          10
+        30     50.824
+
+         2 Squat                Legs                          4          12
+        45     80.324
+
+         3 Bench Press          Chest                         3           8
+        35     60.524
+
+
+     EX_ID EX_NAME              MUSCLE_GRP           NO_OF_SETS REPITITIONS
+---------- -------------------- -------------------- ---------- -----------
+  DURATION   CAL_BURN
+---------- ----------
+         4 Pull Up              Back                          3           6
+        25     46.124
+
+         5 Plank                Core                          3           1
+        60     30.624
+
+         6                                                                2
+               50.098
+
+
+     EX_ID EX_NAME              MUSCLE_GRP           NO_OF_SETS REPITITIONS
+---------- -------------------- -------------------- ---------- -----------
+  DURATION   CAL_BURN
+---------- ----------
+         7                                                                3
+               54.003
+
+         8                                                                2
+               65.456
+
+
+8 rows selected.
+
+60.TO ROUND OFF THE CAL_BURN IN EXERCISE TABLE
+
+SQL> SELECT ROUND(cal_burn) from exercise;
+
+ROUND(CAL_BURN)
+---------------
+             51
+             80
+             61
+             46
+             31
+             50
+             54
+             65
+
+8 rows selected.
+
+61.SQL> SELECT ROUND(cal_burn,0) from exercise;
+
+ROUND(CAL_BURN,0)
+-----------------
+               51
+               80
+               61
+               46
+               31
+               50
+               54
+               65
+
+8 rows selected.
+
+62.SQL> SELECT ROUND(cal_burn,2) from exercise;
+
+ROUND(CAL_BURN,2)
+-----------------
+            50.82
+            80.32
+            60.52
+            46.12
+            30.62
+             50.1
+               54
+            65.46
+
+8 rows selected.
+
+63.ROUND OFF TO NEAREST 10'S
+
+
+SQL> SELECT ROUND(cal_burn,-1) from exercise;
+
+ROUND(CAL_BURN,-1)
+------------------
+                50
+                80
+                60
+                50
+                30
+                50
+                50
+                70
+
+8 rows selected.
+
+64.ROUND OFF TO NEAREST 100'S
+
+SQL> SELECT ROUND(cal_burn,-2) from exercise;
+
+ROUND(CAL_BURN,-2)
+------------------
+               100
+               100
+               100
+                 0
+                 0
+               100
+               100
+               100
+
+
+
+8 rows selected.
+
+65.TO TRUNCATE THE CAL_BURN IN EXERCISE 
+
+SQL> SELECT TRUNC(cal_burn) FROM exercise;
+
+TRUNC(CAL_BURN)
+---------------
+             50
+             80
+             60
+             46
+             30
+             50
+             54
+             65
+
+8 rows selected.
+
+66.SQL> SELECT TRUNC(cal_burn,0) FROM exercise;
+
+TRUNC(CAL_BURN,0)
+-----------------
+               50
+               80
+               60
+               46
+               30
+               50
+               54
+               65
+
+8 rows selected.
+
+67.TO TRUNCATE TO 2 DECIMAL VALUE
+
+SQL> SELECT TRUNC(cal_burn,2) FROM exercise;
+
+TRUNC(CAL_BURN,2)
+-----------------
+            50.82
+            80.32
+            60.52
+            46.12
+            30.62
+            50.09
+               54
+            65.45
+
+8 rows selected.
+
+68.TO TRUNCATE TO NEAREST 10'S
+
+SQL> SELECT TRUNC(cal_burn,-1) FROM exercise;
+
+TRUNC(CAL_BURN,-1)
+------------------
+                50
+                80
+                60
+                40
+                30
+                50
+                50
+                60
+
+8 rows selected.
+
+69.TO TRUNCATE TO NEAREST 100'S
+
+SQL> SELECT TRUNC(cal_burn,-2) FROM exercise;
+
+TRUNC(CAL_BURN,-2)
+------------------
+                 0
+                 0
+                 0
+                 0
+                 0
+                 0
+                 0
+                 0
+
+8 rows selected.
+
+70.TO GET THE REMAINDER FOR EXERCISE AFTER DIVIDING WITH 11
+
+SQL> SELECT MOD(CAL_BURN,11) FROM exercise;
+
+MOD(CAL_BURN,11)
+----------------
+           6.824
+           3.324
+           5.524
+           2.124
+           8.624
+           6.098
+          10.003
+          10.456
+
+8 rows selected.
+
+71.TO SELECT ABOSOLUTE VALUE FOR CAL_BURN
+
+SQL> SELECT ABS(CAL_BURN) FROM exercise;
+
+ABS(CAL_BURN)
+-------------
+       50.824
+       80.324
+       60.524
+       46.124
+       30.624
+       50.098
+       54.003
+       65.456
+
+8 rows selected.
+
+72.TO PRINT THE ABS OF -56
+
+SQL> SELECT ABS(-56) FROM DUAL;
+
+  ABS(-56)
+----------
+        56 
+
+73.TO GET CEIL AND FLOOR VALUE OF 23.6
+
+SQL>  select ceil(23.6),floor(23.6) from dual;
+
+CEIL(23.6) FLOOR(23.6)
+---------- -----------
+        24          23
+
+74.TO GET CEIL AND FLOOR VALUE FOR CAL_BURN
+
+SQL>  select ceil(CAL_BURN),FLOOR(CAL_BURN) FROM EXERCISE;
+
+CEIL(CAL_BURN) FLOOR(CAL_BURN)
+-------------- ---------------
+            51              50
+            81              80
+            61              60
+            47              46
+            31              30
+            51              50
+            55              54
+            66              65
+
+8 rows selected.
+
+75.POWER FUNCTION
+
+SQL> select power(2,3),sqrt(16) from dual;
+
+POWER(2,3)   SQRT(16)
+---------- ----------
+         8          4
+
+76.TO GET THE SIGN OF NUMBERS
+
+SQL> select sign(2),sign(-2),sign(0) from dual;
+
+  SIGN(23)  SIGN(-23)    SIGN(0)
+---------- ---------- ----------
+         1         -1          0
+
+77.LOG AND LN FUNCTION
+
+SQL> select ln(24),log(10,10) from dual;
+
+    LN(24) LOG(10,10)
+---------- ----------
+3.17805383          1
+
+78.TO GET THE EXPONENTIAL VALUE OF SOME NUMBERS
+
+SQL> SELECT EXP(1) FROM dual;
+
+    EXP(1)
+----------
+2.71828183
+
+79.SQL> SELECT EXP(-1) FROM dual;
+
+   EXP(-1)
+----------
+.367879441
+
+80.SQL> SELECT EXP(0) FROM dual;
+
+    EXP(0)
+----------
+         1
+
+81.TO FIND THE GREATEST AND SMALLEST AMOUNG NUMBERS
+
+SQL> SELECT GREATEST(2,3,10), LEAST(2.3,4.6,7.9) FROM DUAL;
+
+GREATEST(2,3,10) LEAST(2.3,4.6,7.9)
+---------------- ------------------
+              10                2.3
+
+82.TO PRINT RANDOM VARIABLE
+
+
+SQL> SELECT DBMS_RANDOM.VALUE FROM dual;
+
+     VALUE
+----------
+.309657988
+
+83.SQL> SELECT DBMS_RANDOM.VALUE FROM dual;
+
+     VALUE
+----------
+.996486261
+
+
+______________DATE FUNCTION_____________
+
+84.SQL> select sysdate from dual;
+
+SYSDATE
+---------
+10-FEB-26
+
+85.SQL> select CURRENT_date from dual;
+
+CURRENT_D
+---------
+10-FEB-26
+
+86.SQL> SELECT CURRENT_TIMESTAMP FROM dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+10-FEB-26 01.34.45.680000 PM +05:30
+
+87.TO DO ARTHIMETIC OPERATION WITH DATE
+
+SQL> select sysdate+5 from dual;
+
+SYSDATE+5
+---------
+15-FEB-26
+
+88.SQL> select sysdate-5 from dual;
+
+SYSDATE-5
+---------
+05-FEB-26
+
+89.SQL> select sysdate*5 from dual;
+select sysdate*5 from dual
+       *
+ERROR at line 1:
+ORA-00932: inconsistent datatypes: expected NUMBER got DATE
+
+90.TO FIND THE DIFFERENCE BETWEEN TWO DATE
+
+SQL> SELECT SYSDATE - TO_DATE('17-11-2006', 'DD-MM-YY') AS day_difference FROM dual;
+
+DAY_DIFFERENCE
+--------------
+    7025.56758
+
+91.TO TRUNCATE DAY DIFFERENCE
+
+SQL> SELECT TRUNC(SYSDATE - TO_DATE('17-11-2006', 'DD-MM-YY')) AS day_difference FROM dual;
+
+DAY_DIFFERENCE
+--------------
+          7025
+
+92.TO TRUNCATE WEEK DIFFERENCE
+
+SQL> SELECT TRUNC((SYSDATE - TO_DATE('17-11-2007', 'DD-MM-YYYY'))/7) AS WEEK_difference FROM dual;
+
+WEEK_DIFFERENCE
+---------------
+            951
+
+93.SQL> SELECT TRUNC((SYSDATE - TO_DATE('16-01-24', 'DD-MM-YY'))/30) AS MONT_difference FROM dual;
+
+MONT_DIFFERENCE
+---------------
+             25
+
+94.TO CONVERT A STRING INTO DATE
+
+SQL> SELECT TO_DATE('2006-11-17', 'YYYY-MM-DD’) FROM DUAL;
+
+TO_DATE('
+---------
+17-NOV-06
+
+95.TO CONVERT A DATE INTO STRING(WITH TIME)
+
+SQL> SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM dual;
+
+TO_CHAR(SYSDATE,'YY
+-------------------
+2026-02-10 15:44:47
+
+96.TO CONVERT A DATE INTO STRING
+
+SQL>  SELECT TO_CHAR(SYSDATE, 'YY-MM-DD') FROM dual;
+
+TO_CHAR(
+--------
+26-02-10
+
+97.TO ADD 3 MONTH FROM NOW
+
+SQL> SELECT ADD_MONTHS(SYSDATE, 3)  FROM dual;
+
+ADD_MONTH
+---------
+10-MAY-26
+
+98.TO MINUS 3 MONTH FROM NOW
+
+SQL>  SELECT ADD_MONTHS(SYSDATE, -3)  FROM dual;
+
+ADD_MONTH
+---------
+10-NOV-25
+
+99.TO FIND THE MONTH DIFFERENCE BETWEEN 2 DATE
+
+SQL> SELECT MONTHS_BETWEEN(SYSDATE,'17-NOV-06') FROM DUAL;
+
+MONTHS_BETWEEN(SYSDATE,'17-NOV-06')
+-----------------------------------
+                         230.795478
+
+100.TO TRUNCATE MONTH DIFFERENCE
+
+SQL> SELECT TRUNC(MONTHS_BETWEEN(SYSDATE,'17-NOV-06')) FROM DUAL;
+
+TRUNC(MONTHS_BETWEEN(SYSDATE,'17-NOV-06'))
+------------------------------------------
+                                       230
+
+101.TO ROUND MONTH DIFFERENCE
+
+SQL> SELECT ROUND(MONTHS_BETWEEN(SYSDATE,'17-NOV-06')) FROM DUAL;
+
+ROUND(MONTHS_BETWEEN(SYSDATE,'17-NOV-06'))
+------------------------------------------
+                                       231
+
+102.SQL> SELECT ROUND(MONTHS_BETWEEN('17-NOV-06',SYSDATE)) FROM DUAL;
+
+ROUND(MONTHS_BETWEEN('17-NOV-06',SYSDATE))
+------------------------------------------
+                                      -231
+
+103.TO DISPLAY THE NEXT DAY DATE FROM THE RESPECTIVE DAY
+
+SQL> SELECT NEXT_DAY(SYSDATE, 'MONDAY’) FROM DUAL;
+
+NEXT_DAY(
+---------
+16-FEB-26
+
+104.SQL> SELECT NEXT_DAY(SYSDATE,'SATURDAY') FROM DUAL;
+
+NEXT_DAY(
+---------
+14-FEB-26
+
+105.TO PRINT THE LAST DATE OF THAT RESPECTIVE DATE
+
+SQL> SELECT LAST_DAY(SYSDATE) FROM DUAL;
+
+LAST_DAY(
+---------
+28-FEB-26
+
+
+106.TO PRINT THE LAST DATE OF THAT RESPECTIVE DATE AFTER 50 DAYS
+
+
+SQL> SELECT LAST_DAY(SYSDATE+50) FROM DUAL;
+
+LAST_DAY(
+---------
+30-APR-26 
+
+107.TO TRUNCATE ONLY THE DATE
+
+SQL> SELECT TRUNC(SYSDATE, 'DD') FROM dual;
+
+TRUNC(SYS
+---------
+10-FEB-26
+
+108.TO TRUNCATE ONLY THE MONTH
+
+SQL> SELECT TRUNC(SYSDATE, 'MM') FROM dual;
+
+TRUNC(SYS
+---------
+01-FEB-26
+
+109.TO TRUNCATE ONLY THE YEAR
+
+SQL> SELECT TRUNC(SYSDATE, 'YY') FROM dual;
+
+TRUNC(SYS
+---------
+01-JAN-26
+
+EXTRACT FUNCTION
+
+110.TO EXTRACT ONLY DATE
+
+SQL> SELECT EXTRACT(DAY FROM SYSDATE) FROM dual;
+
+EXTRACT(DAYFROMSYSDATE)
+-----------------------
+                     10
+
+111.TO EXTRACT ONLY MONTH
+
+SQL> SELECT EXTRACT(MONTH FROM SYSDATE) FROM dual;
+
+EXTRACT(MONTHFROMSYSDATE)
+-------------------------
+                        2
+
+112.TO EXTRACT ONLY YEAR
+
+SQL> SELECT EXTRACT(YEAR FROM SYSDATE) FROM dual;
+
+EXTRACT(YEARFROMSYSDATE)
+------------------------
+                    2026
+
+113.TO EXTRACT ONLY HOUR
+
+SELECT EXTRACT(HOUR FROM SYSDATE) FROM dual
+                         *
+ERROR at line 1:
+ORA-30076: invalid extract field for extract source
+
+114.SQL> SELECT EXTRACT(HOUR FROM CURRENT_TIMESTAMP) FROM dual;
+
+EXTRACT(HOURFROMCURRENT_TIMESTAMP)
+----------------------------------
+                                10
+
+115.TO EXTRACT ONLY MINUTE
+
+SQL> SELECT EXTRACT(MINUTES FROM CURRENT_TIMESTAMP) FROM dual;
+SELECT EXTRACT(MINUTES FROM CURRENT_TIMESTAMP) FROM dual
+                       *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+116.SQL> SELECT EXTRACT(MINUTE FROM CURRENT_TIMESTAMP) FROM dual;
+
+EXTRACT(MINUTEFROMCURRENT_TIMESTAMP)
+------------------------------------
+                                  56
+
+117.TO EXTRACT ONLY SECONDS
+
+SQL> SELECT EXTRACT(SECOND FROM CURRENT_TIMESTAMP) FROM dual;
+
+EXTRACT(SECONDFROMCURRENT_TIMESTAMP)
+------------------------------------
+                              17.161
+
+ROUND() FOR DATE
+
+
+118.SQL> SELECT ROUND(sysdate, 'YYYY') FROM dual;
+
+ROUND(SYS
+---------
+01-JAN-26
+
+119.SQL> SELECT ROUND(sysdate, 'MM') FROM dual;
+
+ROUND(SYS
+---------
+01-FEB-26
+
+120.SQL> SELECT ROUND(sysdate, 'DD') FROM dual;
+
+ROUND(SYS
+---------
+11-FEB-26
+
+121.SQL> SELECT ROUND(sysdate, 'DAY') FROM dual;
+
+ROUND(SYS
+---------
+08-FEB-26
+
+122.SQL> SELECT ROUND(sysdate, 'MON') FROM dual;
+
+ROUND(SYS
+---------
+01-FEB-26
+
+123.SQL> SELECT ROUND(sysdate, 'HH') FROM dual;
+
+ROUND(SYS
+---------
+10-FEB-26
+
+124.SQL> SELECT ROUND(sysdate, 'MI') FROM dual;
+
+ROUND(SYS
+---------
+10-FEB-26
+
+125.TO CONVERT A STRING TO NUMBER
+
+SQL> SELECT TO_NUMBER('23') FROM dual;
+
+TO_NUMBER('23')
+---------------
+             23
+
+126.TO CONVERT A NUMBER INTO STRING
+
+SQL> SELECT TO_CHAR(26) FROM dual;
+
+TO
+--
+26
+
+
+127.SQL> SELECT TO_CHAR(sysdate, 'HH') FROM dual;
+
+TO
+--
+04
+
+128.SQL> SELECT TO_CHAR(sysdate, 'MI') FROM dual;
+
+TO
+--
+34
+
+129.SQL> SELECT TO_CHAR(sysdate, 'MON') FROM dual;
+
+TO_CHAR(SYSD
+------------
+FEB
+
+130.SQL> SELECT TO_CHAR(sysdate, 'YY') FROM dual;
+
+TO
+--
+26
+
+131.SQL> SELECT TO_CHAR(sysdate, 'DD') FROM dual;
+
+TO
+--
+10
+
+132.SQL> SELECT TO_CHAR(sysdate, 'MM') FROM dual;
+
+TO
+--
+02
+
+DECODE FUNCTION
+
+133.TO DISPLAY A NEW COLUMN AREA LIKE MADURAI-METRO,SIVAKASI-URBAN,OTHERS FOR TABLE USERS
+
+SQL> SELECT NAME,ADDRESS_CITY,DECODE(ADDRESS_CITY,'madurai','METRO','sivakasi','URBAN','OTHERS') AREA FROM USERS;
+
+NAME                           ADDRESS_CITY                   AREA
+------------------------------ ------------------------------ ------
+praveen                        madurai                        METRO
+prasanna                       sivakasi                       URBAN
+gopesh                         chennai                        OTHERS
+rajayoken                      VIRUTHUNAGAR                   OTHERS
+manoj                          madurai                        METRO
+prince                         madurai                        METRO
+david                          tirunelveli                    OTHERS
+hari                           tirunelveli                    OTHERS
+
+8 rows selected.
+
+
+134.SQL> SELECT NAME,ADDRESS_CITY,DECODE(ADDRESS_CITY,'LOWER(MADURAI)','METRO','LOWER(SIVAKASI)','URBAN','OTHERS') FROM USERS;
+
+NAME                           ADDRESS_CITY                   DECODE
+------------------------------ ------------------------------ ------
+praveen                        madurai                        OTHERS
+prasanna                       sivakasi                       OTHERS
+gopesh                         chennai                        OTHERS
+rajayoken                      VIRUTHUNAGAR                   OTHERS
+manoj                          madurai                        OTHERS
+prince                         madurai                        OTHERS
+david                          tirunelveli                    OTHERS
+hari                           tirunelveli                    OTHERS
+
+
+AGGREGATE FUNCTIONS
+
+135.TO DISPLAY COUNT OF ROWS IN USERS
+
+SQL> select count(*) from users;
+
+  COUNT(*)
+----------
+         8
+
+136.TO DISPLAY COUNT OF AGE COLUMN
+
+SQL> select count(age) from users;
+
+COUNT(AGE)
+----------
+         7
+
+137.TO DISPLAY COUNT OF ROWS IN LOGIN
+
+SQL> select count(*) from login;
+
+  COUNT(*)
+----------
+         7
+
+138.TO DISPLAY AVERAGE OF AGE IN USERS
+
+SQL> select avg(age) from users;
+
+  AVG(AGE)
+----------
+20.1428571
+
+139.TO DISPLAY AVERAGE OF CAL_BURN IN EXERCISE
+
+SQL> select avg(cal_burn) from exercise;
+
+AVG(CAL_BURN)
+-------------
+    54.747125
+
+140.TO FIND THE SUM OF CAL_BURN IN EXERCISE
+
+SQL> select SUM(cal_burn) from exercise;
+
+SUM(CAL_BURN)
+-------------
+      437.977
+141.TO FIND THE SUM OF AGE IN USERS
+
+SQL> select SUM(age) from users;
+
+  SUM(AGE)
+----------
+       141
+
+142.TO FIND THE MINIMUM OF AGE FROM USERS
+
+SQL> select min(age) from users;
+
+  MIN(AGE)
+----------
+        19
+
+143.TO FIND THE MINIMUM OF CAL_BURN IN EXERCISE
+
+SQL> select min(cal_burn) from exercise;
+
+MIN(CAL_BURN)
+-------------
+       30.624
+
+144.TO FIND THE MAXIMUM OF AGE FROM USERS
+
+SQL> select MAX(age) from users;
+
+  MAX(AGE)
+----------
+        22
+
+145.TO FIND THE MAXIMUM OF CAL_BURN IN EXERCISE
+
+SQL> select MAX(cal_burn) from exercise;
+
+MAX(CAL_BURN)
+-------------
+       80.324
+146.TO FIND THE MEDIAN OF CAL_BURN IN EXERCISE
+
+SQL> select MEDIAN(cal_burn) from exercise;
+
+MEDIAN(CAL_BURN)
+----------------
+         52.4135
+
+147.TO FIND THE MEDIAN OF AGE IN USERS
+
+SQL> select MEDIAN(age) from users;
+
+MEDIAN(AGE)
+-----------
+         20
+
+148.TO FIND THE VARIANCE OF CAL_BURN IN EXERCISE
+
+SQL> select VARIANCE(cal_burn) from exercise;
+
+VARIANCE(CAL_BURN)
+------------------
+        213.724466
+
+149.TO FIND THE VARIANCE OF AGE IN USERS
+
+SQL> select VARIANCE(age) from users;
+
+VARIANCE(AGE)
+-------------
+   1.14285714
+
+150.TO FIND THE STANDARD DEVIATION OF CAL_BURN IN EXERCISE
+
+SQL> select STDDEV(cal_burn) from exercise;
+
+STDDEV(CAL_BURN)
+----------------
+      14.6193183
+
+151.TO FIND THE STANDARD DEVIATION OF AGE IN USERS
+
+SQL> select STDDEV(age) from users;
+
+STDDEV(AGE)
+-----------
+ 1.06904497
+
+ORDER BY
+
+152.TO DISPLAY NAME ORDER BY AGE IN ASC FROM USERS
+
+
+SQL> select name,age from users order by age;
+
+NAME                                  AGE
+------------------------------ ----------
+praveen                                19
+prince                                 19
+prasanna                               20
+hari                                   20
+manoj                                  20
+david                                  21
+rajayoken                              22
+gopesh
+
+8 rows selected.
+
+153.TO DISPLAY NAME ORDER BY AGE IN DESC FROM USERS
+
+SQL> select name,age from users order by age desc;
+
+NAME                                  AGE
+------------------------------ ----------
+gopesh
+rajayoken                              22
+david                                  21
+hari                                   20
+manoj                                  20
+prasanna                               20
+praveen                                19
+prince                                 19
+
+8 rows selected.
+
+154.TO DISPLAY AGE AND NAME ORDER BY NAME AND AGE DESC
+
+SQL> select AGE,NAME from users order by NAME,AGE desc;
+
+       AGE NAME
+---------- ------------------------------
+        22 rajayoken
+        19 prince
+        19 praveen
+        20 prasanna
+        20 manoj
+        20 hari
+           gopesh
+        21 david
+
+8 rows selected.
+
+155.TO DISPLAY AGE AND NAME ORDER BY NAME DESC AND AGE DESC
+
+       AGE NAME
+---------- ------------------------------
+        22 rajayoken
+        19 prince
+        19 praveen
+        20 prasanna
+        20 manoj
+        20 hari
+           gopesh
+        21 david
+
+8 rows selected.
+
+156.TO DISPLAY NAME,AGE ORDER BY AGE ASC AND NAME IN DESC
+
+SQL> select AGE,NAME from users order by AGE ASC,NAME DESC;
+
+       AGE NAME
+---------- ------------------------------
+        19 prince
+        19 praveen
+        20 prasanna
+        20 manoj
+        20 hari
+        21 david
+        22 rajayoken
+           gopesh
+
+8 rows selected.
+
+GROUPING CLASS
+
+157.TO DISPLAY CITY GROUP BY CITY IN USER
+
+SQL> select address_city from users group by address_city;
+
+ADDRESS_CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+Tirunelveli
+
+158.TO GROUP BY CITY WITHOUT CITY IN FROM CLASS
+
+SQL> select * from users group by address_city;
+select * from users group by address_city
+       *
+ERROR at line 1:
+ORA-00979: not a GROUP BY expression
+
+
+159.TO GROUP BY AGE USING IN USERS
+
+SQL> select age from users group by age;
+
+       AGE
+----------
+        19
+        20
+
+        22
+        21
+
+160.TO COUNT THE  DIFFERENT CITIES
+
+SQL> select address_city,COUNT(address_city) from users group by address_city;
+
+ADDRESS_CITY                   COUNT(ADDRESS_CITY)
+------------------------------ -------------------
+madurai                                          3
+sivakasi                                         1
+chennai                                          1
+VIRUTHUNAGAR                                     1
+tirunelveli                                      2
+
+161.TO COUNT THE NUMBER OF USERS HAVING AGE>18 GROUP BY AGE
+
+SQL> select AGE,COUNT(AGE) from users group by AGE HAVING AGE>19;
+
+       AGE COUNT(AGE)
+---------- ----------
+        20          3
+        22          1
+        21          1
+
+162.TO DISPLAY THE CITIES IN WHICH THE USERS AGE AVERAGE GREATER THAN 20
+
+SQL> select address_city,avg(AGE) from users group by address_city HAVING avg(age)>20;
+
+ADDRESS_CITY                     AVG(AGE)
+------------------------------ ----------
+VIRUTHUNAGAR                           22
+tirunelveli                          20.5
+
+163.TO DISPLAY THE CITIES AND AGE OF USERS HAVING CITIES,AGE SAME   
+
+SQL>  select address_city,age,count(age) from users group by address_city,age;
+
+ADDRESS_CITY                          AGE COUNT(AGE)
+------------------------------ ---------- ----------
+madurai                                19          2
+sivakasi                               20          1
+chennai                                            0
+VIRUTHUNAGAR                           22          1
+madurai                                20          1
+tirunelveli                            21          1
+tirunelveli                            20          1
+                                                   0
+
+8 rows selected.
+
+
+SQL> select distinct(age) from users;
+
+       AGE
+----------
+        19
+        20
+
+        22
+        21
+
+
+164.TO COUNT THE NUMBER OF DISTINCT AGE IN USERS
+
+SQL> select count(distinct(age)) from users;
+
+COUNT(DISTINCT(AGE))
+--------------------
+                   4
+
+
+SQL> select count(*) from exercise;
+
+  COUNT(*)
+----------
+         8
+
+SQL> select count(*) from exercise_copy;
+
+  COUNT(*)
+----------
+        10
+
+165.TO MERGE exercise AND exercise_copy
+
+SQL> SELECT EX_ID,EX_NAME FROM EXERCISE;
+
+     EX_ID EX_NAME
+---------- --------------------
+         1 Push Up
+         2 Squat
+         3 Bench Press
+         4 Pull Up
+         5 Plank
+         6
+         7
+         8
+
+8 rows selected.
+SQL> SELECT EX_ID,EX_NAME FROM EXERCISE_COPY;
+
+     EX_ID EX_NAME
+---------- --------------------
+         1 Push Up
+         2 Squat
+         3 Bench Press
+         4 Pull Up
+         5 Plank
+         6
+         7
+         8
+        43
+       
+
+9 rows selected.
+
+SQL> MERGE INTO EXERCISE E
+  2      USING EXERCISE_COPY E1
+  3      ON (E.EX_ID = E1.EX_ID)
+  4      WHEN MATCHED THEN
+  5          UPDATE SET E.EX_NAME = E1.EX_NAME
+  6      WHEN NOT MATCHED THEN
+  7          INSERT (E.EX_ID,CAL_BURN)
+  8         VALUES (44,65.000);
+
+9 rows merged.
+
+SQL> SELECT EX_ID,CAL_BURN FROM EXERCISE;
+
+     EX_ID   CAL_BURN
+---------- ----------
+         1     50.824
+         2     80.324
+         3     60.524
+         4     46.124
+         5     30.624
+         6     50.098
+         7     54.003
+         8     65.456
+        44         65
+
+9 rows selected.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

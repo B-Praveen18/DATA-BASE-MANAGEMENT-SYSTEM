@@ -1,0 +1,563 @@
+1.TO CREATE A SIMPLE VIEW THAT SELECTS CUSTOMER NAMES AND THEIR CITIES
+
+SQL> create view cus_city_name as select name,city from customer;
+
+View created.
+
+SQL> select * from cus_city_name;
+
+NAME                 CITY
+-------------------- --------------------
+@praveenvirat        madurai
+@prasanna            sivakasi
+@manoj               madurai
+@prince              madurai
+@hari                tirunelveli
+@david               tirunelveli
+gopesh               chennai
+
+7 rows selected.
+
+WITH WHERE CLAUSE________
+
+2.TO CREATE
+ A VIEW THAT ONLY SHOWS CUSTOMERS WHO LIVE IN MADURAI
+
+SQL> create view cus_name_city as select name,city from customer where city='madurai';
+
+View created.
+
+SQL> select * from cus_name_city;
+
+NAME                 CITY
+-------------------- --------------------
+@praveenvirat        madurai
+@manoj               madurai
+@prince              Madurai
+
+WITH JOINS________
+
+3.SHOW THE CUSTOMER NAME ALONG WITH THEIR AGE
+
+SQL> create view name_age as select c.name,u.age from customer c join users u on c.name=u.name;
+
+View created.
+
+SQL> select * from name_age;
+
+NAME                        AGE
+-------------------- ----------
+@praveenvirat                19
+@prasanna                    20
+gopesh
+@manoj                       20
+@prince                      19
+@hari                        21
+@david                       20
+
+7 rows selected.
+
+4.SHOW THE CUSTOMER NAME,AGE ALONG WITH THEIR TRAINER ID
+
+SQL> create view name_age_trainer as select c.name,u.age,t.t_id from customer c join users u on c.user_id=u.user_id join trainer t on c.trainer_name=t.name;
+
+View created.
+
+SQL> select * from name_age_trainer;
+
+NAME                        AGE       T_ID
+-------------------- ---------- ----------
+@praveenvirat                19        101
+@prasanna                    20        102
+@manoj                       20        103
+@prince                      19        104
+@david                       20        104
+
+VIEW WITH AGGREGATION______
+
+5.TO SHOW THE CUSTOMER WHOSE AGE IS GREATER THAN AVG AGE
+
+SQL> create view avg_age as select name,age from users where age>(select avg(age) from users);
+
+View created.
+
+SQL> select avg(age) from users;
+
+  AVG(AGE)
+----------
+      22.9
+
+SQL> select * from avg_age;
+
+NAME                   AGE
+--------------- ----------
+yogesh                  30
+kishore                 30
+jones                   28
+
+NESTED VIEW - VIEW CREATED FROM OTHER VIEW____
+
+6.TO SHOW THE CUSTOMER WHO AGE IS EQUAL TO THE AGE 22
+
+SQL> create view c3 as select name,age from users;
+
+View created.
+
+SQL> select * from c3;
+
+NAME                   AGE
+--------------- ----------
+@praveenvirat           19
+@prasanna               20
+gopesh
+@raja                   22
+@manoj                  20
+@prince                 19
+@hari                   21
+@david                  20
+yogesh                  30
+kishore                 30
+jones                   28
+sakthi
+
+15 rows selected.
+
+SQL> create view c4 as select name,age from c3 where age=22;
+
+View created.
+
+SQL> select * from c4;
+
+NAME                   AGE
+--------------- ----------
+@raja                   22
+
+MODIFYING VIEWS__________
+
+SQL> create view c7 as select * from customer;
+
+View created.
+
+SQL> select * from c7 where user_id=18;
+
+FITNESS_LEVEL           USER_ID NAME                 TRAINER_NAME
+-------------------- ---------- -------------------- --------------------
+CITY
+--------------------
+Beginner                     18 @praveenvirat        @raja
+madurai
+
+
+SQL> select * from customer where user_id=18;
+
+FITNESS_LEVEL           USER_ID NAME                 TRAINER_NAME
+-------------------- ---------- -------------------- --------------------
+CITY
+--------------------
+Beginner                     18 @praveenvirat        @raja
+madurai
+
+7.TO COMMIT CHANGES TO VIEW C7 THAT CHANGES VALUES IN CUSTOMER
+
+
+SQL> update c7 set name='@praveen' where user_id=18;
+
+1 row updated.
+
+SQL> select * from c7 where user_id=18;
+
+FITNESS_LEVEL           USER_ID NAME                 TRAINER_NAME
+-------------------- ---------- -------------------- --------------------
+CITY
+--------------------
+Beginner                     18 @praveen             @raja
+madurai
+
+
+SQL> select * from customer where user_id=18;
+
+FITNESS_LEVEL           USER_ID NAME                 TRAINER_NAME
+-------------------- ---------- -------------------- --------------------
+CITY
+--------------------
+Beginner                     18 @praveen             @raja
+Madurai
+
+8.TO ADD A ROW INTO C7( i.e INCREASE THE ROW IN MAIN TABLE ALSO)
+
+SQL> select count(*) from customer;
+
+  COUNT(*)
+----------
+         7
+
+SQL> select count(*) from c7;
+
+  COUNT(*)
+----------
+         7
+
+SQL> insert into c7 values('high',1,'kohli','@raja','delhi');
+
+1 row created.
+
+SQL> select count(*) from c7;
+
+  COUNT(*)
+----------
+         8
+
+SQL> select count(*) from customer;
+
+  COUNT(*)
+----------
+         8
+
+INDEX -- INDEXES ARE USED TO IMPROVE THE PERFORMANCE OF DATABASE QUERIES BY ALLOWING THE DATABASE TO FIND ROWS MORE QUICKLY
+9.BTREE INDEX
+
+SQL> create index c1 on customer(city);
+
+Index created.
+
+10.UNIQUE INDEX
+
+SQL> create unique index u1 on customer(name);
+
+Index created.
+
+11.BITMAP INDEX
+
+SQL> create bitmap index b1 on users(address_city);
+
+Index created.
+
+12.COMPOSITE INDEX
+
+SQL> create index e1 on users(age,address_city);
+
+Index created.
+
+13.PRIMARY INDEX
+is an index automatically created on a table when a Primary Key constraint is defined. The primary index ensures the uniqueness of the rows based on the primary key
+
+SQL> create index r1 on users(user_id);
+create index r1 on users(user_id)
+                         *
+ERROR at line 1:
+ORA-01408: such column list already indexed
+
+14.SECONDARY INDEX
+
+SQL> create index f1 on customer(user_id);
+
+Index created.
+
+
+15.TO UPDATE VIEW (CREATED BY GROUP BY)
+
+SQL> create view c91 as select address_city,count(*) as city_count from u_copy group by address_city;
+
+View created.
+
+ADDRESS_CITY                   CITY_COUNT
+------------------------------ ----------
+madurai                                 3
+sivakasi                                2
+chennai                                 2
+VIRUTHUNAGAR                            2
+tirunelveli                             2
+delhi                                   1
+                                        2
+kovilpatti                              1
+
+8 rows selected.
+
+SQL> update c91 set address_city ='Madurai' where address_city='madurai';
+update c91 set address_city ='Madurai' where address_city='madurai'
+       *
+ERROR at line 1:
+ORA-01732: data manipulation operation not legal on this view
+
+16.TO INSERT INTO VIEW TABLE(CREATED BY JOINS)
+
+SQL> create view dd as select name,username from users u join login l on u.user_id=l.user_id;
+
+View created.
+
+SQL> insert into dd values('nandha','@nandha');
+insert into dd values('nandha','@nandha')
+*
+ERROR at line 1:
+ORA-01779: cannot modify a column which maps to a non key-preserved table
+
+17.TO DELETE VIEW CC
+
+SQL> create view cc as select name,age from u_copy;
+
+View created.
+
+SQL> delete from cc;
+
+15 rows deleted.
+
+SQL> select * from cc;
+
+no rows selected
+
+SQL> select * from u_copy;
+
+no rows selected
+
+SQL> SET TIMING ON;
+ 
+SQL> SELECT ADDRESS_CITY FROM USERS;
+
+ADDRESS_CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+madurai
+madurai
+tirunelveli
+tirunelveli
+delhi
+
+
+
+ADDRESS_CITY
+------------------------------
+chennai
+sivakasi
+kovilpatti
+VIRUTHUNAGAR
+
+15 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> CREATE INDEX R4 ON USERS(ADDRESS_CITY);
+
+Index created.
+
+Elapsed: 00:00:00.08
+SQL> SELECT ADDRESS_CITY FROM USERS;
+
+ADDRESS_CITY
+------------------------------
+madurai
+sivakasi
+chennai
+VIRUTHUNAGAR
+madurai
+madurai
+tirunelveli
+tirunelveli
+delhi
+
+
+
+ADDRESS_CITY
+------------------------------
+chennai
+sivakasi
+kovilpatti
+VIRUTHUNAGAR
+
+15 rows selected.
+
+Elapsed: 00:00:00.00
+SQL> SELECT AGE FROM USERS WHERE AGE BETWEEN 19 AND 30;
+
+       AGE
+----------
+        19
+        19
+        20
+        20
+        20
+        21
+        22
+        28
+        30
+        30
+
+10 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> SELECT AGE,COUNT(*) FROM USERS GROUP BY AGE;
+
+       AGE   COUNT(*)
+---------- ----------
+        19          2
+        20          3
+                    5
+        22          1
+        21          1
+        30          2
+        28          1
+
+7 rows selected.
+
+Elapsed: 00:00:00.00
+
+SQL> CREATE INDEX FF  ON USERS(AGE);
+
+Index created.
+
+Elapsed: 00:00:00.02
+SQL> SELECT AGE FROM USERS WHERE AGE BETWEEN 19 AND 30;
+
+       AGE
+----------
+        19
+        19
+        20
+        20
+        20
+        21
+        22
+        28
+        30
+        30
+
+10 rows selected.
+
+Elapsed: 00:00:00.00
+SQL> SELECT AGE,COUNT(*) FROM USERS GROUP BY AGE;
+
+       AGE   COUNT(*)
+---------- ----------
+        19          2
+        20          3
+                    5
+        22          1
+        21          1
+        30          2
+        28          1
+
+7 rows selected.
+
+Elapsed: 00:00:00.00
+
+TO DISPLAY ONLY FIRST THREE ONLY
+
+SQL> select * from users fetch first 3 rows only;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ---------------
+        18         19 17-NOV-06 virat18@gmail.com
+madurai                        TN
+koodalnagar                    customer   @praveenvirat
+
+        17         20 12-JAN-06 prasanna@gmail.com
+sivakasi                       TN
+nagar                          customer   @prasanna
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ---------------
+
+        11
+chennai
+                               customer   gopesh
+
+
+ROW NUMBER____
+
+
+SQL> SELECT ROW_NUMBER() OVER ( ORDER BY AGE ) AS ROWNO ,USER_ID,AGE,DOB FROM USERS;
+
+     ROWNO    USER_ID        AGE DOB
+---------- ---------- ---------- ---------
+         1         18         19 17-NOV-06
+         2         14         19 03-MAR-07
+         3         17         20 12-JAN-06
+         4         12         20 03-APR-06
+         5         15         20 03-MAR-06
+         6         13         21 03-MAR-05
+         7         16         22 12-JAN-04
+         8         21         28 23-DEC-97
+         9         20         30 23-DEC-95
+        10         19         30 23-MAR-96
+        11          3
+
+     ROWNO    USER_ID        AGE DOB
+---------- ---------- ---------- ---------
+        12         11
+        13          1
+        14         22
+        15          2
+
+15 rows selected.
+
+
+SQL> UPDATE customer c
+  2  SET fitness_level = CASE
+  3    WHEN (SELECT u.age FROM users u WHERE u.user_id = c.user_id) < 20 THEN 'Beginner'
+  4    WHEN (SELECT u.age FROM users u WHERE u.user_id = c.user_id) BETWEEN 20 AND 25 THEN 'Intermediate'
+  5    ELSE 'Advanced'
+  6  END
+  7  WHERE c.city = 'madurai';
+
+3 rows updated.
+
+SQL> select * from customer where city='madurai';
+
+FITNESS_LEVEL           USER_ID NAME                 TRAINER_NAME
+-------------------- ---------- -------------------- --------------------
+CITY
+--------------------
+Beginner                     18 @praveen             @raja
+madurai
+
+Intermediate                 15 @manoj               kishore
+madurai
+
+Beginner                     14 @prince              jones
+Madurai
+
+SQL> INSERT INTO customer (fitness_level, user_id, name, trainer_name, city)
+  2  SELECT
+  3    CASE
+  4      WHEN u.age < 20 THEN 'Beginner'
+  5      WHEN u.age BETWEEN 20 AND 25 THEN 'Intermediate'
+  6      ELSE 'Advanced'
+  7    END,
+  8    u.user_id, u.name, 'raja', u.address_city
+  9  FROM users u
+ 10  WHERE u.user_type = 'customer'
+ 11    AND u.user_id NOT IN (SELECT user_id FROM customer);
+
+0 rows created.
+
+SQL> select count(*) from customer;
+
+  COUNT(*)
+----------
+         8
+
+SQL> DELETE FROM customer c
+  2  WHERE CASE
+  3    WHEN (SELECT u.age FROM users u WHERE u.user_id = c.user_id) > 25 THEN 1
+  4    WHEN c.city = 'chennai' THEN 1
+  5    ELSE 0
+  6  END = 1;
+
+1 row deleted.
+
+SQL> select count(*) from customer;
+
+  COUNT(*)
+----------
+         7
+
+

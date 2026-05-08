@@ -1,0 +1,837 @@
+
+1.)UPDATE AGE OF A USER WITH USER_ID IS 18(UPDATE IN BLOCK)
+
+SQL> select name,age from users where user_id=18;
+
+NAME                   AGE
+--------------- ----------
+@praveenvirat           19
+
+SQL> begin
+  2  update users set age=20 where user_id=18;
+  3  dbms_output.put_line('user with user_id 18 name has been updated to 20');
+  4  commit;
+  5  end;
+  6  /
+user with user_id 18 name has been updated to 20
+
+PL/SQL procedure successfully completed.
+
+SQL> select name,age from users where user_id=18;
+
+NAME                   AGE
+--------------- ----------
+@praveenvirat           20
+
+2.)TO INSERT A NEW RECORED INTO USERS(INSERT IN BLOCK)
+
+SQL> select * from users where user_id=45;
+
+no rows selected
+
+SQL> declare
+  2  v_name users.name%type;
+  3  v_id number;
+  4  begin
+  5  v_name :='rohit';
+  6  v_id :=45;
+  7  insert into users(user_id,name) values(v_id,v_name);
+  8  dbms_output.put_line('inserted successfully'||v_name);
+  9  end;
+ 10  /
+inserted successfullyrohit
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from users where user_id=45;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ---------------
+        45
+
+                                          rohit
+3.)TO DISPLAY THE SUM OF USERS AGE(AGGREGATE AND SELECT IN BLOCK)
+
+SQL> declare
+  2  s_sum number;
+  3  begin
+  4  select sum(age) into s_sum from users;
+  5  dbms_output.put_line('the sum of age is:'|| s_sum);
+  6  end;
+  7  /
+the sum of age is:231
+
+PL/SQL procedure successfully completed.
+
+4.)TO DISPLAY THE DETAILS OF PRAVEENVIRAT(%ROWTYPE)
+
+SQL> declare
+  2  r_details users%rowtype;
+  3  begin
+  4  select * into r_details from users where user_id=18;
+  5  dbms_output.put_line('NAME:'||r_details.name);
+  6  dbms_output.put_line('AGE:'||r_details.age);
+  7  dbms_output.put_line('CITY:'||r_details.address_city);
+  8  dbms_output.put_line('USER_ID:'||r_details.user_id);
+  9  end;
+ 10  /
+NAME:@praveenvirat
+AGE:20
+CITY:madurai
+USER_ID:18
+
+PL/SQL procedure successfully completed.
+
+5.)TO DISPLAY THE DETAILS OF PRAVEENVIRAT(TYPE RECORD)
+
+SQL>  declare
+  2      type v_record is record(
+  3      v_name users.name%type,
+  4      v_age users.age%type,
+  5      v_is number,
+  6      v_city users.address_city%type
+  7      );
+  8      vv_record v_record;
+  9      begin
+ 10     select name,age,user_id,address_city into vv_record from  users where user_id=18;
+ 11     dbms_output.put_line('NAME:'||vv_record.v_name);
+ 12     dbms_output.put_line('AGE:'||vv_record.v_age);
+ 13     dbms_output.put_line('CITY:'||vv_record.v_city);
+ 14     dbms_output.put_line('ID:'||vv_record.v_is);
+ 15     end;
+ 16     /
+NAME:@praveenvirat
+AGE:20
+CITY:madurai
+ID:18
+
+PL/SQL procedure successfully completed.
+
+
+
+
+PL/SQL procedure successfully completed.	
+
+CURSOR_________________
+
+6.)TO DISPLAY THE NAME AND AGE OF USER(EXPLICIT CURSOR)
+
+SQL>  declare
+  2     v_name varchar(20);
+  3     v_age number;
+  4     cursor c_cursor is select name,age from users where user_id=18;
+  5     begin
+  6     open c_cursor;
+  7     fetch c_cursor into v_name,v_age;
+  8     dbms_output.put_line('NAME:'||v_name);
+  9     dbms_output.put_line('AGE:'||v_age);
+ 10     close c_cursor;
+ 11     end;
+ 12    /
+NAME:@praveenvirat
+AGE:20
+
+PL/SQL procedure successfully completed.
+
+7.)TO DISPLAY THE NAME AND AGE OF USER(IMPLICIT CURSOR)
+
+ SQL> declare
+  2     v_name varchar(20);
+  3     v_age number;
+  4     begin
+  5     select name,age into v_name,v_age from users where user_id=18;
+  6     dbms_output.put_line('NAME:'||v_name);
+  7      dbms_output.put_line('AGE:'||v_age);
+  8     end;
+  9     /
+NAME:@praveenvirat
+AGE:20
+
+PL/SQL procedure successfully completed.
+
+8.)EXPLICIT CURSOR ATTRIBUTES(%FOUND,%NOTFOUND,%ISOPEN,%ROWCOUNT)
+
+SQL> declare
+  2  v_name varchar(20);
+  3  v_age number;
+  4  cursor c_cursor is select name,age from users;
+  5  begin
+  6  open c_cursor;
+  7  fetch c_cursor into v_name,v_age;
+  8  if c_cursor%found then
+  9     dbms_output.put_line('first row fetched'|| v_name);
+ 10  else
+ 11     dbms_output.put_line('no row fetched');
+ 12  end if;
+ 13  fetch c_cursor into v_name,v_age;
+ 14  if c_cursor%found then
+ 15     dbms_output.put_line('second row fetched'|| v_name);
+ 16  else
+ 17     dbms_output.put_line('no row fetched');
+ 18  end if;
+ 19  if c_cursor%isopen then
+ 20     dbms_output.put_line('cursor open');
+ 21  else
+ 22     dbms_output.put_line('cursor not open');
+ 23  end if;
+ 24  dbms_output.put_line('the no of rows fetched:'||c_cursor%rowcount);
+ 25  close c_cursor;
+ 26  if c_cursor%isopen then
+ 27     dbms_output.put_line('cursor open');
+ 28  else
+ 29     dbms_output.put_line('cursor not open');
+ 30  end if;
+ 31  end;
+ 32  /
+first row fetched@praveenvirat
+second row fetched@prasanna
+cursor open
+the no of rows fetched:2
+cursor not open
+
+PL/SQL procedure successfully completed.
+
+11.)TO FETCH USERS AGE AND GIVE THEIR ELIGIBILITY(IF,ELSIF,ELSE)
+
+SQL> declare
+  2  v_name varchar(20);
+  3  v_age number;
+  4  cursor c_cursor is select name,age from users;
+  5  begin
+  6  open c_cursor;
+  7  for I in 1..4 loop
+  8     fetch c_cursor into v_name,v_age;
+  9     if v_age<30 then
+ 10             dbms_output.put_line('NAME:'||v_name||' ||AGE:'||v_age||'|| ADULT');
+ 11     elsif v_age>30 and v_age<=50 then
+ 12             dbms_output.put_line('NAME:'||v_name||' ||AGE:'||v_age||'|| MIDDLE AGE');
+ 13     else
+ 14             dbms_output.put_line('NAME:'||v_name||' ||AGE:'||v_age||'|| SENIOR');
+ 15     end if;
+ 16  end loop;
+ 17  close c_cursor;
+ 18  end;
+ 19  /
+NAME:@praveenvirat ||AGE:20|| ADULT
+NAME:@prasanna ||AGE:20|| ADULT
+NAME:gopesh ||AGE:|| SENIOR
+NAME:@raja ||AGE:22|| ADULT
+
+PL/SQL procedure successfully completed.
+
+12.)TO PRINT 1 TO 5 (LOOP AND EXIT WHEN)
+
+SQL> declare
+  2  n number :=0;
+  3  begin
+  4  loop
+  5     dbms_output.put_line('number'|| n);
+  6     n :=n+1;
+  7     exit when n>5;
+  8  end loop;
+  9  end;
+ 10  /
+number0
+number1
+number2
+number3
+number4
+number5
+
+PL/SQL procedure successfully completed.
+
+13.)TO PRINT nXn PATTERN(USING FOR LOOP)
+
+SQL> declare
+  2  n number;
+  3  begin
+  4  n :=&n;
+  5  for I in 1..n loop
+  6     for j in 1..n loop
+  7             dbms_output.put('* ');
+  8     end loop;
+  9     dbms_output.new_line;
+ 10  end loop;
+ 11  end;
+ 12  /
+Enter value for n: 3
+old   4: n :=&n;
+new   4: n :=3;
+* * *
+* * *
+* * *
+
+PL/SQL procedure successfully completed.
+
+14.)TO PRINT ONLY EVEN NUMBER IN GIVEN NUMBER RANGE(USING BY KEYWORD)
+
+SQL> declare
+ 1  n number;
+ 2  begin
+ 3  n :=&n;
+ 4  dbms_output.put('even no between 0 and '||n||' are:');
+ 5  for i in 0..n by 2 loop
+ 6      dbms_output.put(i||' ');
+ 7  end loop;
+ 8   dbms_output.new_line;
+ 9  end;
+10   /
+Enter value for n: 10
+old   4: n :=&n;
+new   4: n :=10;
+even no between 0 and 10 are:0 2 4 6 8 10
+
+PL/SQL procedure successfully completed.
+
+15.)TO PRINT ONLY EVEN NUMBER IN GIVEN NUMBER RANGE(WITHOUT BY KEYWORD)
+
+SQL>  declare
+  2     n number;
+  3     begin
+  4     n :=&n;
+  5     dbms_output.put('even no between 0 and '||n||' are:');
+  6     for i in 0..n  loop
+  7         dbms_output.put(i||' ');
+  8     i := i+2;
+  9     end loop;
+ 10      dbms_output.new_line;
+ 11     end;
+ 12     /
+Enter value for n: 10
+old   4:    n :=&n;
+new   4:    n :=10;
+        i := i+2;
+        *
+ERROR at line 8:
+ORA-06550: line 8, column 2:
+PLS-00363: expression 'I' cannot be used as an assignment target
+ORA-06550: line 8, column 2:
+PL/SQL: Statement ignored
+
+16.)FACTORIAL OF NUMBER(WHILE LOOP)
+SQL> declare
+  2  v_num number;
+  3  v number;
+  4  ans number :=1;
+  5  begin
+  6  v_num :=& v_num;
+  7  v :=v_num;
+  8  while v_num>0 loop
+  9     ans :=ans*v_num;
+ 10     v_num :=v_num-1;
+ 11  end loop;
+ 12  dbms_output.put_line('factorial of '||v||' is '||ans);
+ 13  end;
+ 14  /
+Enter value for v_num: 5
+old   6: v_num :=& v_num;
+new   6: v_num :=5;
+factorial of 5 is 120
+
+PL/SQL procedure successfully completed.
+
+Enter value for v_num: 6
+old   6: v_num :=& v_num;
+new   6: v_num :=6;
+factorial of 6 is 720
+
+17.TO DISPLAY ALL USERS AGE NAME IN CURSOR(EXPLICIT CURSOR IN FOR LOOP)
+
+SQL> declare
+  2  name varchar(20);
+  3  age number;
+  4  cursor c_cursor is select * from users;
+  5  begin
+  6  for i in c_cursor loop
+  7      dbms_output.put_line('NAME:'||i.name||'  AGE:'||i.age);
+  8  end loop;
+  9  end;
+ 10  /
+NAME:@praveenvirat  AGE:20
+NAME:@prasanna  AGE:20
+NAME:gopesh  AGE:
+NAME:@raja  AGE:22
+NAME:@manoj  AGE:20
+NAME:@prince  AGE:20
+NAME:@hari  AGE:21
+NAME:@david  AGE:20
+NAME:kohli  AGE:
+NAME:  AGE:
+NAME:  AGE:
+NAME:yogesh  AGE:30
+NAME:kishore  AGE:30
+NAME:jones  AGE:28
+NAME:sakthi  AGE:
+NAME:ROHIT  AGE:
+
+PL/SQL procedure successfully completed.
+
+18.)TO DISPLAY ALL USERS AGE NAME IN CURSOR(IMPLICIT CURSOR IN FOR LOOP)
+
+SQL>     begin
+  2      for i in (select * from users) loop
+  3          dbms_output.put_line('NAME:'||i.name||'  AGE:'||i.age);
+  4      end loop;
+  5      end;
+  6    /
+NAME:@praveenvirat  AGE:20
+NAME:@prasanna  AGE:20
+NAME:gopesh  AGE:
+NAME:@raja  AGE:22
+NAME:@manoj  AGE:20
+NAME:@prince  AGE:20
+NAME:@hari  AGE:21
+NAME:@david  AGE:20
+NAME:kohli  AGE:
+NAME:  AGE:
+NAME:  AGE:
+NAME:yogesh  AGE:30
+NAME:kishore  AGE:30
+NAME:jones  AGE:28
+NAME:sakthi  AGE:
+NAME:ROHIT  AGE:
+
+PL/SQL procedure successfully completed.
+
+19.)TO DISPLAY ALL THE ODD NUMBER FROM n TO 0 AND EXIT WITH 0
+
+SQL> declare
+  2  n number;
+  3  begin
+  4  n :=&n;
+  5  for i in reverse 0..n loop
+  6     if mod(i,2)!=0 then
+  7             dbms_output.put(i||' ');
+  8             continue;
+  9     end if;
+ 10     if i=0 then
+ 11             dbms_output.new_line;
+ 12             dbms_output.put_line('came to zero');
+ 13             exit;
+ 14     end if;
+ 15  end loop;
+ 16  end;
+ 17  /
+Enter value for n: 8
+old   4: n :=&n;
+new   4: n :=8;
+7 5 3 1
+came to zero
+
+PL/SQL procedure successfully completed.
+
+EXCEPTION__________________-
+
+20.)NO DATA FOUND EXCEPTION
+
+SQL>  declare
+  2      v_name varchar(20);
+  3      n number;
+  4      begin
+  5      n :=&n;
+  6      select name into v_name from users where user_id=n;
+  7      dbms_output.put_line('name:'||v_name);
+  8      exception
+  9      when no_data_found then
+ 10         dbms_output.put_line('error:no data found');
+ 11      end;
+ 12     /
+Enter value for n: 999
+old   5:     n :=&n;
+new   5:     n :=999;
+error:no data found
+
+Enter value for n: 18
+old   5:     n :=&n;
+new   5:     n :=18;
+name:@praveenvirat
+
+21.)TOO MANY ROWS
+
+SQL> declare
+  2  v_name varchar(20);
+  3  begin
+  4  select name into v_name from users;
+  5  dbms_output.put_line('name:'||v_name);
+  6  exception
+  7  when too_many_rows then
+  8  dbms_output.put_line('error:too many rows');
+  9  end;
+ 10  /
+error:too many rows
+
+PL/SQL procedure successfully completed.
+
+22.)ZERO DIVIDE 
+
+SQL> declare
+  2  n number :=0;
+  3  begin
+  4  n:=n/n;
+  5  dbms_output.put_line(n);
+  6  exception
+  7  when zero_divide then
+  8  dbms_output.put_line('error:cant divide with 0');
+  9  end;
+ 10  /
+error:cant divide with 0
+
+PL/SQL procedure successfully completed.
+
+23.)VALUE ERROR
+
+SQL> declare
+ 1  v_age number;
+ 2   begin
+ 3   select name into v_age from users where user_id=18;
+ 4   dbms_output.put_line(v_age);
+ 5   exception
+ 6   when value_error then
+ 7   dbms_output.put_line('error:value error');
+ 8   end;
+ 9  /
+error:value error
+
+PL/SQL procedure successfully completed.
+
+24.)OTHERS EXCEPTION
+
+SQL> declare
+  2  v_age number;
+  3  v_name varchar(20);
+  4  begin
+  5  select age into v_age from users where user_id=18;
+  6  dbms_output.put_line(v_age);
+  7  select name into v_name from users;
+  8  dbms_output.put_line(v_name);
+  9  exception
+ 10  when value_error then
+ 11  dbms_output.put_line('error:value error');
+ 12  when others then
+ 13  dbms_output.put_line('error:unexpected error');
+ 14  end;
+ 15  /
+20
+error:unexpected error
+
+PL/SQL procedure successfully completed.	
+
+25.)USER DEFINED EXCPETION FOR NEGATIVE AGE
+
+SQL> declare
+  2  age number;
+  3  negative_error exception;
+  4  begin
+  5  age :=&age;
+  6  if age<0 then
+  7     raise negative_error;
+  8  else
+  9     dbms_output.put_line('correct format age:'||age);
+ 10  end if;
+ 11  exception
+ 12  when negative_error then
+ 13     dbms_output.put_line('age cannot be negative');
+ 14  end;
+ 15  /
+Enter value for age: 18
+old   5: age :=&age;
+new   5: age :=18;
+correct format age:18
+
+Enter value for age: -9
+old   5: age :=&age;
+new   5: age :=-9;
+age cannot be negative
+
+HACKERRANK_____
+
+
+1.)A)TO FIND WHETHER A NUMBER IS EVEN OR ODD,POSITIVE NEGATIVE OR ZERO AND ARMSTRONG OR NOT 
+DECLARE
+	V_NUM NUMBER;
+	L_LEN NUMBER :=0;
+	N NUMBER :=0;
+	REM NUMBER :=0;
+	ANS NUMBER :=0;
+BEGIN
+	v_num :=& v_num;
+	IF V_NUM=0 THEN
+		DBMS_OUTPUT.PUT_LINE('NUMBER IS ZERO');
+	ELSIF V_NUM>0 THEN
+		DBMS_OUTPUT.PUT_LINE('NUMBER IS POSITIVE');
+		IF MOD(V_NUM,2)=0 THEN
+		DBMS_OUTPUT.PUT_LINE('EVEN');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('ODD');
+	END IF;
+	L_LEN :=LENGTH(TO_CHAR((V_NUM)));
+	N :=(V_NUM);
+	WHILE N!=0 LOOP
+		REM :=MOD(N,10);
+		ANS :=ANS+(POWER(REM,L_LEN));
+		N :=TRUNC(N/10);
+	END LOOP;
+	IF ANS=(V_NUM) THEN
+		DBMS_OUTPUT.PUT_LINE('NUMBER IS ARMSTRONG');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('NUMBER IS NOT ARMSTRONG');
+	END IF;	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('NUMBER IS NEGATIVE');
+	END IF;
+	
+END;
+/
+Enter value for v_num: 1634
+old   8:        v_num :=& v_num;
+new   8:        v_num :=1634;
+NUMBER IS POSITIVE
+EVEN
+NUMBER IS ARMSTRONG
+
+Enter value for v_num: 0
+old   8:        v_num :=& v_num;
+new   8:        v_num :=0;
+NUMBER IS ZERO
+EVEN
+NUMBER IS ARMSTRONG
+
+Enter value for v_num: 57
+old   8:        v_num :=& v_num;
+new   8:        v_num :=57;
+NUMBER IS POSITIVE
+ODD
+NUMBER IS NOT ARMSTRONG
+
+Enter value for v_num: -344
+old   8:        v_num :=& v_num;
+new   8:        v_num :=-344;
+NUMBER IS NEGATIVE
+
+
+1.)B)TO FIND THE FIFONACCI OF A NUMBER
+SQL> DECLARE
+  2     A NUMBER :=-1 ;
+  3     B NUMBER :=1;
+  4     TEMP NUMBER :=0;
+  5     NUM NUMBER;
+  6  BEGIN
+  7     NUM :=& NUM;
+  8     FOR I IN 1..NUM LOOP
+  9             TEMP :=A+B;
+ 10             DBMS_OUTPUT.PUT_LINE(TEMP||' ');
+ 11             A :=B;
+ 12             B :=TEMP;
+ 13     END LOOP;
+ 14  END;
+ 15  /
+Enter value for num: 5
+old   7:   NUM := &NUM;
+new   7:   NUM := 5;
+0 1 1 2 3
+
+
+2 DECLARE CURSOR TO RETRIEVE EMPLOYEE WHOSE NAME STARTS WITH '@p' AND DISPLAY THE 
+VALUES OF  CURSOR ATTRIBUTES
+  SQL>  declare
+  2     v_name varchar(20);
+  3     v_age number;
+  4     cursor c_cursor is select name,age from users where name like '@p%';
+  5     begin
+  6     open c_cursor;
+  7     fetch c_cursor into v_name,v_age;
+  8     if c_cursor%found then
+  9        dbms_output.put_line('first row fetched'|| v_name);
+ 10     else
+ 11        dbms_output.put_line('no row fetched');
+ 12     end if;
+ 13     fetch c_cursor into v_name,v_age;
+ 14     if c_cursor%found then
+ 15        dbms_output.put_line('second row fetched'|| v_name);
+ 16     else
+ 17        dbms_output.put_line('no row fetched');
+ 18     end if;
+ 19     if c_cursor%isopen then
+ 20        dbms_output.put_line('cursor open');
+ 21     else
+ 22        dbms_output.put_line('cursor not open');
+ 23     end if;
+ 24     dbms_output.put_line('the no of rows fetched:'||c_cursor%rowcount);
+ 25     close c_cursor;
+ 26      if c_cursor%isopen then
+ 27        dbms_output.put_line('cursor open');
+ 28     else
+ 29        dbms_output.put_line('cursor not open');
+ 30     end if;
+ 31     end;
+ 32    /
+first row fetched@prasanna
+second row fetched@praveenvirat
+cursor open
+the no of rows fetched:2
+cursor not open
+
+PL/SQL procedure successfully completed.
+
+3.)DECLARE CURSOR TO COUNT NUMBER OF EMPLOYEES RESIDING IN SIVAKASI AND AGE
+ HIGHER THAN AVERAGE AGE OF THEIR CITY WITH NECESSARY EXCEPTION HANDLING.
+
+SQL> select count(*) from users where age>(select avg(age) from users group by address_city having address_city='sivakasi') and address_city='sivakasi';
+
+  COUNT(*)
+----------
+         1
+
+SQL> declare
+  2  c_count number;
+  3  cursor_open exception;
+  4  cursor c_cursor is select count(*) from users where age>(select avg(age) from users group by address_city having address_city='sivakasi') and address_city='sivakasi';
+  5  begin
+  6  open c_cursor;
+  7  fetch c_cursor into c_count;
+  8  if c_cursor%isopen then
+  9     dbms_output.put_line('no of users in sivakasi greater than avg age of people in sivakasi are:'||c_count);
+ 10  else
+ 11     raise cursor_open;
+ 12  end if;
+ 13  close c_cursor;
+ 14  if c_cursor%isopen then
+ 15     dbms_output.put_line('no of users in sivakasi greater than avg age of people in sivakasi are:'||c_count);
+ 16  else
+ 17     raise cursor_open;
+ 18  end if;
+ 19  exception
+ 20  when cursor_open then
+ 21     dbms_output.put_line('error:cursor closed');
+ 22  end;
+ 23  /
+no of users in sivakasi greater than avg age of people in sivakasi are:1
+error:cursor closed
+
+PL/SQL procedure successfully completed.
+
+3.)PRIME OR NOT
+SQL> declare
+  2  n number;
+  3  flag number :=1;
+  4  begin
+  5  n :=&n;
+  6  for i in 2..n/2 loop
+  7     if mod(n,i)=0 then
+  8             flag :=0;
+  9     else
+ 10             flag :=1;
+ 11     end if;
+ 12  end loop;
+ 13  if flag=1 then
+ 14  dbms_output.put_line('prime');
+ 15  else
+ 16  dbms_output.put_line(' not prime');
+ 17  end if;
+ 18  end;
+ 19  /
+Enter value for n: 2
+old   5: n :=&n;
+new   5: n :=2;
+prime	
+
+Enter value for n: 4
+old   5: n :=&n;
+new   5: n :=4;
+not prime
+
+SQL> declare
+  2         row users%rowtype;
+  3         cursor c_cursor is select * from users;
+  4         begin
+  5         open c_cursor;
+  6         loop
+  7         exit when c_cursor%notfound;
+  8         fetch c_cursor into row;
+  9         dbms_output.put_line('NAME:'||row.name||'AGE:'||row.age);
+ 10         end loop;
+ 11         close c_cursor;
+ 12         end;
+ 13         /
+NAME:@praveenviratAGE:18
+NAME:@prasannaAGE:20
+NAME:gopeshAGE:
+NAME:@rajaAGE:22
+NAME:@manojAGE:20
+NAME:@princeAGE:20
+NAME:@hariAGE:21
+NAME:@davidAGE:20
+NAME:kohliAGE:
+NAME:AGE:
+NAME:AGE:
+NAME:yogeshAGE:30
+NAME:kishoreAGE:30
+NAME:jonesAGE:28
+NAME:sakthiAGE:
+NAME:suryavanshiAGE:15
+NAME:dhoniAGE:47
+NAME:ROHITAGE:
+NAME:wasi sundharAGE:
+NAME:gillAGE:
+NAME:gillAGE:
+
+PL/SQL procedure successfully completed.
+
+
+
+ SQL> declare
+  2      v_name varchar(20);
+  3      v_age number;
+  4      cursor c_cursor is select name,age from users;
+  5      begin
+  6      open c_cursor;
+  7      loop
+  8      exit when c_cursor%notfound;
+  9      fetch c_cursor into v_name,v_age;
+ 10      dbms_output.put_line('NAME:'||v_name||' AGE:'||v_age);
+ 11      end loop;
+ 12     dbms_output.put_line('the no of rows fetched:'||c_cursor%rowcount);
+ 13      if c_cursor%isopen then
+ 14        dbms_output.put_line('cursor open');
+ 15     else
+ 16       dbms_output.put_line('cursor not open');
+ 17     end if;
+ 18     close c_cursor;
+ 19     if c_cursor%isopen then
+ 20        dbms_output.put_line('cursor open');
+ 21     else
+ 22        dbms_output.put_line('cursor not open');
+ 23     end if;
+ 24     end;
+ 25     /
+NAME:@praveenvirat AGE:18
+NAME:@prasanna AGE:20
+NAME:gopesh AGE:
+NAME:@raja AGE:22
+NAME:@manoj AGE:20
+NAME:@prince AGE:20
+NAME:@hari AGE:21
+NAME:@david AGE:20
+NAME:kohli AGE:
+NAME: AGE:
+NAME: AGE:
+NAME:yogesh AGE:30
+NAME:kishore AGE:30
+NAME:jones AGE:28
+NAME:sakthi AGE:
+NAME:suryavanshi AGE:15
+NAME:dhoni AGE:47
+NAME:ROHIT AGE:
+NAME:wasi sundhar AGE:
+NAME:gill AGE:
+NAME:gill AGE:
+the no of rows fetched:20
+cursor open
+cursor not open
+
+PL/SQL procedure successfully completed.
+

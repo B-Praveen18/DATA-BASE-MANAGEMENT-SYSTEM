@@ -1,0 +1,868 @@
+1.)TO INSERT ROWS INTO USERS(NO PARAMETER)
+
+SQL> select * from users where user_id=103;
+
+no rows selected
+
+
+SQL> create or replace  procedure p1
+  2  is
+  3  begin
+  4  insert into users(user_id,name) values(103,'wasi sundhar');
+  5  end p1;
+  6  /
+
+Procedure created.
+
+SQL> exec p1;
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from users where user_id=103;
+
+   USER_ID        AGE DOB       EMAIL
+---------- ---------- --------- ------------------------------
+ADDRESS_CITY                   ADDRESS_STATE
+------------------------------ ------------------------------
+ADDRESS_STREET                 USER_TYPE  NAME
+------------------------------ ---------- ---------------
+       103
+
+                                          wasi sundhar
+
+2.)PRINT HELLO WORLD(NO PARAMETER)
+
+SQL> create or replace procedure hello
+  2  is
+  3  begin
+  4  dbms_output.put_line('HELLO WORLD');
+  5  end hello;
+  6  /
+
+Procedure created.
+
+SQL> exec hello;
+HELLO WORLD
+
+PL/SQL procedure successfully completed.
+
+3.)TO INSERT ROW INTO USERS(IN PARAMETER)
+
+SQL>  create or replace  procedure p2(id in number,name in varchar2)
+  2      is
+  3      begin
+  4      insert into users(user_id,name) values(id,name);
+  5      end p2;
+  6     /
+
+Procedure created.
+
+SQL> exec p2(104,'gill');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select user_id,name from users where user_id=104;
+
+   USER_ID NAME
+---------- ---------------
+       104 gill
+
+4.)PATTERN nXn(IN PARAMETER)
+SQL> create or replace procedure star(n in number)
+  2  is
+  3  begin
+  4  for I in 1..n loop
+  5  for j in 1..n loop
+  6  dbms_output.put(' * ');
+  7  end loop;
+  8  dbms_output.new_line;
+  9  end loop;
+ 10  end star;
+ 11  /
+
+Procedure created.
+
+SQL> declare
+  2  n number;
+  3  begin
+  4  n :=&n;
+  5  star(n);
+  6  end;
+  7  /
+Enter value for n: 3
+old   4: n :=&n;
+new   4: n :=3;
+*  *  *
+*  *  *
+*  *  *
+
+Enter value for n: 5
+old   4: n :=&n;
+new   4: n :=5;
+*  *  *  *  *
+*  *  *  *  *
+*  *  *  *  *
+*  *  *  *  *
+*  *  *  *  *
+
+
+5.)TO GET USER_ID AND RETURN THEIR NAME(IN PARAMETER,OUT PARAMETER)
+SQL> create or replace procedure p3(id in number,name out varchar2)
+  2  is
+  3  begin
+  4  select name into name from users where user_id=id;
+  5  end p3;
+  6  /
+
+Procedure created.
+
+SQL> declare
+  2  id number;
+  3  name varchar(20);
+  4  begin
+  5  id :=&id;
+  6  p3(id,name);
+  7  dbms_output.put_line('NAME:'||name);
+  8  end;
+  9  /
+Enter value for id: 18
+old   5: id :=&id;
+new   5: id :=18;
+NAME:@praveenvirat
+
+PL/SQL procedure successfully completed.
+
+Enter value for id: 17
+old   5: id :=&id;
+new   5: id :=17;
+NAME:@prasanna
+
+PL/SQL procedure successfully completed.
+
+6.)PRIME OR NOT(IN PARAMETER ,OUT PARAMETER)
+
+SQL> create or replace procedure prime(num in number,ans out varchar2)
+  2  is
+  3  flag number:=1;
+  4  begin
+  5  for i in 2..num/2 loop
+  6  if mod(num,i)=0 then
+  7     flag :=0;
+  8     exit;
+  9  else
+ 10     flag :=1;
+ 11  end if;
+ 12  end loop;
+ 13  if flag=1 then
+ 14     ans :='prime';
+ 15  else
+ 16     ans :='not prime';
+ 17  end if;
+ 18  end prime;
+ 19  /
+
+Procedure created.
+
+SQL> declare
+  2  num number;
+  3  ans varchar(15);
+  4  begin
+  5  num :=&num;
+  6  prime(num,ans);
+  7  dbms_output.put_line(' THE NUMBER '||num||' IS '||ans);
+  8  end;
+  9  /
+Enter value for num: 2
+old   5: num :=&num;
+new   5: num :=2;
+THE NUMBER 2 IS prime
+
+Enter value for num: 4
+old   5: num :=&num;
+new   5: num :=4;
+THE NUMBER 4 IS not prime
+
+
+7.)TO GET USER_ID AND NAME AND RETURN THEIR CITY AND AGE (IN OUT PARAMETER)
+SQL> create or replace procedure p4(id in out number,name in out varchar2)
+  2  is
+  3  begin
+  4  select age,address_city into id,name from users where user_id=id and name=name;
+  5  end p4;
+  6  /
+
+Procedure created.
+
+SQL> declare
+  2  id number;
+  3  name varchar(20);
+  4  begin
+  5  id :=&id;
+  6  name :=&name;
+  7  p4(id,name);
+  8  dbms_output.put_line('city:'||name||' age:'||id);
+  9  end;
+ 10  /
+Enter value for id: 18
+old   5: id :=&id;
+new   5: id :=18;
+Enter value for name: '@praveenvirat'
+old   6: name :=&name;
+new   6: name :='@praveenvirat';
+city:madurai age:18
+
+PL/SQL procedure successfully completed.
+
+
+8.)FACTORIAL OF NUMBER(IN OUT PARAMETER)
+SQL> create or replace procedure fact(n in out number)
+  2  is
+  3  ans number :=1;
+  4  begin
+  5  while n>0 loop
+  6  ans :=ans*n;
+  7  n :=n-1;
+  8  end loop;
+  9  n :=ans;
+ 10  end fact;
+ 11  /
+
+Procedure created.
+SQL> declare
+  2  num number;
+  3  begin
+  4  num :=&num;
+  5  dbms_output.put('FACTORIAL OF NUMBER '||num||' IS ');
+  6  fact(num);
+  7  dbms_output.put_line(num);
+  8  end;
+  9  /
+Enter value for num: 5
+old   4: num :=&num;
+new   4: num :=5;
+FACTORIAL OF NUMBER 5 IS 120
+
+PL/SQL procedure successfully completed.
+
+Enter value for num: 6
+old   4: num :=&num;
+new   4: num :=6;
+FACTORIAL OF NUMBER 6 IS 720
+
+PL/SQL procedure successfully completed.
+
+
+9.)TO DISPLAY THE VALUES IN RECORD BY CURSOR(OUT PARAMETER)
+
+SQL> create or replace procedure p5(c_cursor out sys_refcursor)
+  2  is
+  3  begin
+  4  open c_cursor for select name,age from users;
+  5  end p5;
+  6  /
+
+Procedure created.
+
+SQL> declare
+  2  v_cursor sys_refcursor;
+  3  name varchar(20);
+  4  age number;
+  5  begin
+  6  p5(v_cursor);
+  7  loop
+  8  fetch v_cursor into name,age;
+  9  exit when v_cursor%notfound;
+ 10  dbms_output.put_line('NAME:'||name||' AGE:'||age);
+ 11  end loop;
+ 12  end;
+ 13  /
+NAME:@praveenvirat AGE:18
+NAME:@prasanna AGE:20
+NAME:gopesh AGE:
+NAME:@raja AGE:22
+NAME:@manoj AGE:20
+NAME:@prince AGE:20
+NAME:@hari AGE:21
+NAME:@david AGE:20
+NAME:kohli AGE:
+NAME: AGE:
+NAME: AGE:
+NAME:yogesh AGE:30
+NAME:kishore AGE:30
+NAME:jones AGE:28
+NAME:sakthi AGE:
+NAME:suryavanshi AGE:15
+NAME:dhoni AGE:47
+NAME:ROHIT AGE:
+NAME:wasi sundhar AGE:
+NAME:gill AGE:
+
+PL/SQL procedure successfully completed.
+
+10.)TO READ ONLY FIRST 5 NAME FROM USERS(OUT PARAMETER)
+
+SQL> create or replace procedure five(c_cursor out sys_refcursor)
+  2  is
+  3  begin
+  4  open c_cursor for select name from users fetch first 5 rows only;
+  5  end five;
+  6  /
+
+Procedure created.
+
+SQL> declare
+  2  v_cursor sys_refcursor;
+  3  name varchar(20);
+  4  begin
+  5  five(v_cursor);
+  6  loop
+  7  fetch v_cursor into name;
+  8  exit when v_cursor%notfound;
+  9  dbms_output.put_line('NAME:'||name);
+ 10  end loop;
+ 11  end;
+ 12  /
+NAME:@david
+NAME:@hari
+NAME:@manoj
+NAME:@prasanna
+NAME:@praveenvirat
+
+PL/SQL procedure successfully completed.
+
+11.)FUNCTION TO GET THE TOTAL NUMBER OF ROWS IN TABLE USERS(NO PARAMETER)
+
+SQL> create or replace function c_count return number
+  2  is
+  3  c number;
+  4  begin
+  5  select count(*) into c from users;
+  6  return c;
+  7  exception
+  8  when others then
+  9  return 0;
+ 10  end c_count;
+ 11  /
+
+Function created.
+
+SQL> begin
+  2  dbms_output.put_line(c_count);
+  3  end;
+  4  /
+18
+
+PL/SQL procedure successfully completed.
+
+12.)FUNCTION TO RETURN THE TOTAL NUMBER OF USERS WHO IS HAVING AGE GREATER THAN AVERAGE AGE(NO PARAMETER)
+
+SQL> create or replace function av_age return number
+  2  is
+  3  num number;
+  4  begin
+  5  select count(*) into num from users where age>(select avg(age) from users);
+  6  return num;
+  7  exception
+  8  when others then
+  9  return null;
+ 10  end av_age;
+ 11  /
+
+Function created.
+
+SQL> begin
+  2  dbms_output.put_line('COUNT:'||av_age);
+  3  end;
+  4  /
+COUNT:4
+
+PL/SQL procedure successfully completed.
+
+SQL>  select count(*) from users where age>(select avg(age) from users);
+
+  COUNT(*)
+----------
+         4
+
+13.)FUNCTION TO GET USER_ID FROM USER AND RETURN NAME OF THAT PARTICULAR USER(SINGLE PARAMETER)
+
+SQL>  create or replace function r_name(id in number) return varchar2
+  2      is
+  3      v_name varchar(20);
+  4      begin
+  5      select name into v_name from users where user_id=id;
+  6      return v_name;
+  7      exception
+  8      when others then
+  9      return null;
+ 10     end r_name;
+ 11     /
+
+Function created.
+
+SQL> declare
+  2      n number;
+  3      begin
+  4      n :=&n;
+  5      dbms_output.put_line('NAME OF '||n||' IS '||r_name(n));
+  6      end;
+  7      /
+Enter value for n: 18
+old   4:     n :=&n;
+new   4:     n :=18;
+NAME OF 18 IS @praveenvirat
+
+Enter value for n: 17
+old   4: n :=&n;
+new   4: n :=17;
+NAME OF 17 IS @prasanna
+
+14.)FUNCTION TO FIND ARMSTRONG OR NOT(SINGLE PARAMETER)
+
+SQL> create or replace function arm(n in number) return varchar2
+  2  is
+  3     L_LEN NUMBER :=0;
+  4     num NUMBER :=0;
+  5     REM NUMBER :=0;
+  6     ANS NUMBER :=0;
+  7  BEGIN
+  8     L_LEN :=LENGTH(TO_CHAR((n)));
+  9     num :=n;
+ 10     WHILE num!=0 LOOP
+ 11             REM :=MOD(num,10);
+ 12             ANS :=ANS+(POWER(REM,L_LEN));
+ 13             num :=TRUNC(num/10);
+ 14     END LOOP;
+ 15     IF ANS=n THEN
+ 16             return 'ARMSTRONG';
+ 17     ELSE
+ 18             return 'NOT ARMSTRONG';
+ 19     END IF;
+ 20  END arm;
+ 21  /
+
+Function created.
+
+SQL> declare
+  2  n number;
+  3  begin
+  4  n :=&n;
+  5  dbms_output.put_line('THE NUMBER '||n||' IS '||arm(n));
+  6  end;
+  7  /
+Enter value for n: 153
+old   4: n :=&n;
+new   4: n :=153;
+THE NUMBER 153 IS ARMSTRONG
+
+Enter value for n: 23
+old   4: n :=&n;
+new   4: n :=23;
+THE NUMBER 23 IS NOT ARMSTRONG
+
+PL/SQL procedure successfully completed.
+
+15.)FUNCTION TO COUNT THE NUMBER OF USERS IN SPECIFIED CITY AND AGE MUST BE GREATER THAN THE GIVEN AGE(MULTI PARAMETERS)
+
+SQL> create or replace function city_count(city in varchar2,a in number) return number
+  2  is
+  3  n number;
+  4  begin
+  5  select count(*) into n from users where address_city=city and age>a;
+  6  return n;
+  7  exception
+  8  when others then
+  9  return 0;
+ 10  end city_count;
+ 11  /
+
+Function created.
+
+
+SQL> declare
+  2  age number;
+  3  begin
+  4  age :=&age;
+  5  dbms_output.put_line('NUMBER OF ROWS IN MADURAI GREATER THAN AGE '||age||' is '||city_count('madurai',age));
+  6  end;
+  7  /
+Enter value for age: 16
+old   4: age :=&age;
+new   4: age :=16;
+NUMBER OF ROWS IN MADURAI GREATER THAN AGE 16 is 3
+
+PL/SQL procedure successfully completed.
+
+16.)TO DISPLAY THE DETAIL OF USER(RETURN ROWTYPE)
+
+SQL> create or replace function r_row(id in number) return users%rowtype
+  2  is
+  3  row users%rowtype;
+  4  begin
+  5  select * into row from users where user_id=id;
+  6  return row;
+  7  exception
+  8  when others then
+  9  return null;
+ 10  end r_row;
+ 11  /
+
+Function created.
+
+SQL> declare
+  2  n number;
+  3  ans users%rowtype;
+  4  begin
+  5  n :=&n;
+  6  ans :=r_row(n);
+  7  dbms_output.put_line('NAME:'||ans.name||' AGE:'||ans.age||' CITY:'||ans.address_city);
+  8  end;
+  9  /
+Enter value for n: 18
+old   5: n :=&n;
+new   5: n :=18;
+NAME:@praveenvirat AGE:18 CITY:madurai
+
+Enter value for n: 17
+old   5: n :=&n;
+new   5: n :=17;
+NAME:@prasanna AGE:20 CITY:sivakasi
+
+PL/SQL procedure successfully completed.
+
+17.)TO DISPLAY THE DEATILS OF THE USERS(RETURN CURSOR)
+
+
+SQL>  create or replace function f1 return sys_refcursor
+  2  is
+  3  c_cursor sys_refcursor;
+  4  begin
+  5  open c_cursor for select name,user_id from user_copy;
+  6  return c_cursor;
+  7  end f1;
+  8  /
+
+Function created.
+
+SQL> declare
+  2  ans sys_refcursor;
+  3  v_name varchar(20);
+  4  id number;
+  5  begin
+  6  ans :=f1;
+  7  loop
+  8     fetch ans into v_name,id;
+  9     dbms_output.put_line('NAME:'||v_name||'  USER ID:'||id);
+ 10     exit when ans%notfound;
+ 11  end loop;
+ 12  end;
+ 13  /
+NAME:prasanna  USER ID:2
+NAME:suryavanshi  USER ID:102
+NAME:praveen  USER ID:3
+NAME:prasanna  USER ID:4
+NAME:dhoni  USER ID:101
+NAME:praveen  USER ID:1
+NAME:prasanna  USER ID:5
+NAME:prasanna  USER ID:6
+NAME:prasanna  USER ID:7
+NAME:KUMAR  USER ID:4
+NAME:RAM  USER ID:2
+NAME:ARUN  USER ID:3
+NAME:KUMAR  USER ID:4
+NAME:ARUN  USER ID:3
+NAME:RAVI  USER ID:5
+NAME:ARUN  USER ID:6
+NAME:sky  USER ID:63
+NAME:sky  USER ID:63
+
+PL/SQL procedure successfully completed.
+
+20.)TO FIND THE SUM OF N NUMBERS(RECURSIVE)
+SQL> create or replace function sum_recur(n in number) return number
+  2  is
+  3  begin
+  4    if n <= 0 then
+  5      return 0;
+  6    else
+  7      return n + sum_recur(n-1);
+  8    end if;
+  9  end sum_recur;
+ 10  /
+
+SQL> declare
+  2  n number;
+  3  begin
+  4  n :=&n;
+  5  dbms_output.put_line('SUM OF N NUMBER:'||sum_recur(n));
+  6  end;
+  7  /
+Enter value for n: 4
+old   4: n :=&n;
+new   4: n :=4;
+SUM OF N NUMBER:10
+
+PL/SQL procedure successfully completed.
+
+HACKERRANK______
+A)Write a PL/SQL procedure to display the user IDs, names, password, and username of all users.
+
+SQL> create or replace procedure details(c_cursor out sys_refcursor)
+  2  is
+  3  begin
+  4  open c_cursor for select l.username,l.password as pwd,user_id,u.name from login l join users u using(user_id);
+  5  end details;
+  6  /
+
+Procedure created.
+
+
+SQL> declare
+  2  v_cursor sys_refcursor;
+  3  username varchar(20);
+  4  pass varchar(20);
+  5  id number;
+  6  name varchar(20);
+  7  begin
+  8  details(v_cursor);
+  9  loop
+ 10  fetch v_cursor into username,pass,id,name;
+ 11  exit when v_cursor%notfound;
+ 12  dbms_output.put_line('USERNAME:'||username||' PASSWORD:'||pass||' ID:'||id||' NAME:'||name);
+ 13  end loop;
+ 14  end;
+ 15  /
+USERNAME:@praveenvirat PASSWORD:virat@18 ID:18 NAME:@praveenvirat
+USERNAME:@prasanna PASSWORD:prasanna ID:17 NAME:@prasanna
+USERNAME:@raja PASSWORD:rajayoke ID:16 NAME:@raja
+USERNAME:@manoj PASSWORD:mathuman ID:15 NAME:@manoj
+USERNAME:@prince PASSWORD:davidpri ID:14 NAME:@prince
+USERNAME:@hari PASSWORD:harihara ID:13 NAME:@hari
+USERNAME:@david PASSWORD:davidimm ID:12 NAME:@david
+
+PL/SQL procedure successfully completed.
+
+B.)write a PL/SQL function to display the user_type of all users. Return of user_type.
+ 
+SQL> create or replace function type return sys_refcursor
+  2  is
+  3  c_cursor sys_refcursor;
+  4  begin
+  5  open c_cursor for select user_id,user_type from users where user_type is not null;
+  6  return c_cursor;
+  7  end type;
+  8  /
+
+Function created.
+
+SQL> declare
+  2  v_cursor sys_refcursor;
+  3  user_id number;
+  4  user_type users.user_type%type;
+  5  begin
+  6  v_cursor :=type;
+  7  dbms_output.put_line('USER_ID '||' USER_TYPE');
+  8  loop
+  9  fetch v_cursor into user_id,user_type;
+ 10  exit when v_cursor%notfound;
+ 11  dbms_output.put_line(user_id||'        '||user_type);
+ 12  end loop;
+ 13  end;
+ 14  /
+USER_ID  USER_TYPE
+18        customer
+17        customer
+11        customer
+16        trainer
+15        customer
+14        customer
+13        customer
+12        customer
+1        customer
+19        trainer
+20        trainer
+21        trainer
+22        trainer
+
+PL/SQL procedure successfully completed.
+
+Write a PL/SQL function to display the average age for each city. Return city and average age
+
+SQL> create or replace function avg_age1 return sys_refcursor
+  2      is
+  3      c_cursor sys_refcursor;
+  4      begin
+  5      open c_cursor for select address_city,avg(age) from users group by address_city;
+  6      return c_cursor;
+  7      end avg_age1;
+  8      /
+
+Function created.
+
+
+SQL>  declare
+  2      v_cursor sys_refcursor;
+  3      age number;
+  4      city varchar(20);
+  5      begin
+  6      v_cursor :=avg_age1;
+  7      dbms_output.put_line('AVG_AGE '||'  CITY');
+  8      loop
+  9      fetch v_cursor into city,age;
+ 10     exit when v_cursor%notfound;
+ 11     dbms_output.put_line(age||'        '||city);
+ 12     end loop;
+ 13     end;
+ 14     /
+AVG_AGE   CITY
+19.3        madurai
+25        sivakasi
+30        chennai
+22        viruthunagar
+20.5        tirunelveli
+31            delhi
+28        kovilpatti
+
+PL/SQL procedure successfully completed.
+
+A)Write a PL/SQL procedure to display the users who have the highest age in each city using a nested while loop.
+
+SQL> CREATE OR REPLACE PROCEDURE max_age_per_city
+  2  IS
+  3      CURSOR city_cur IS SELECT DISTINCT address_city FROM users WHERE address_city IS NOT NULL;
+  4
+  5      v_city      users.address_city%TYPE;
+  6      v_max_age   NUMBER;
+  7      v_user_name users.name%TYPE;
+  8  BEGIN
+  9      OPEN city_cur;
+ 10      FETCH city_cur INTO v_city;
+ 11
+ 12      -- Outer loop: Iterate through each city
+ 13      WHILE city_cur%FOUND LOOP
+ 14          v_max_age := 0;
+ 15
+ 16          -- Inner logic to find max age for current city
+ 17          SELECT MAX(age) INTO v_max_age
+ 18          FROM users
+ 19          WHERE address_city = v_city;
+ 20
+ 21          DECLARE
+ 22              CURSOR user_cur IS
+ 23                  SELECT name FROM users
+ 24                  WHERE address_city = v_city AND age = v_max_age;
+ 25          BEGIN
+ 26              OPEN user_cur;
+ 27              FETCH user_cur INTO v_user_name;
+ 28
+ 29              WHILE user_cur%FOUND LOOP
+ 30                  DBMS_OUTPUT.PUT_LINE('CITY: ' || v_city || ' | NAME: ' || v_user_name || ' | AGE: ' || v_max_age);
+ 31                  FETCH user_cur INTO v_user_name;
+ 32              END LOOP;
+ 33              CLOSE user_cur;
+ 34          END;
+ 35
+ 36          FETCH city_cur INTO v_city;
+ 37      END LOOP;
+ 38
+ 39      CLOSE city_cur;
+ 40  END;
+ 41  /
+
+Procedure created.
+
+SQL> EXEC max_age_per_city;
+CITY: chennai | NAME: yogesh | AGE: 30
+CITY: kovilpatti | NAME: jones | AGE: 28
+CITY: madurai | NAME: @manoj | AGE: 20
+CITY: madurai | NAME: @prince | AGE: 20
+CITY: sivakasi | NAME: kishore | AGE: 30
+CITY: tirunelveli | NAME: @hari | AGE: 21
+CITY: viruthunagar | NAME: @raja | AGE: 22
+
+PL/SQL procedure successfully completed.
+
+A) Procedure to return the City with the maximum number of Users
+
+SQL> CREATE OR REPLACE PROCEDURE max_users_city (
+  2      v_out_city OUT VARCHAR2,
+  3      v_out_count OUT NUMBER
+  4  ) IS
+  5  BEGIN
+  6      -- Finds the city with the highest count by sorting desc and taking the top 1
+  7      SELECT address_city, count_val
+  8      INTO v_out_city, v_out_count
+  9      FROM (
+ 10          SELECT address_city, COUNT(*) as count_val
+ 11          FROM users
+ 12          WHERE address_city IS NOT NULL
+ 13          GROUP BY address_city
+ 14          ORDER BY count_val DESC
+ 15      )
+ 16      WHERE ROWNUM = 1;
+ 17  END;
+ 18  /
+
+Procedure created.
+
+SQL> DECLARE
+  2      city_name VARCHAR2(50);
+  3      user_count NUMBER;
+  4  BEGIN
+  5      max_users_city(city_name, user_count);
+  6      DBMS_OUTPUT.PUT_LINE('City with most users: ' || city_name || ' (Count: ' || user_count || ')');
+  7  END;
+  8  /
+City with most users: madurai (Count: 3)
+
+PL/SQL procedure successfully completed.
+
+B) Function to return details of Users younger than the average age in 'arun's' city
+
+SQL> CREATE OR REPLACE FUNCTION users_below_avg_arun RETURN SYS_REFCURSOR
+  2     IS
+  3         v_cursor SYS_REFCURSOR;
+  4     BEGIN
+  5         OPEN v_cursor FOR
+  6         SELECT name, age, address_city
+  7         FROM users
+  8         WHERE age < (
+  9             -- Subquery: Average age of users in the same city as 'ARUN'
+ 10             SELECT AVG(age)
+ 11             FROM users
+ 12             WHERE address_city = (SELECT address_city FROM users WHERE name = '@prasanna' AND ROWNUM = 1)
+ 13         );
+ 14         RETURN v_cursor;
+ 15     END;
+ 16    /
+
+Function created.
+
+SQL> DECLARE
+  2         v_res SYS_REFCURSOR;
+  3         v_name users.name%TYPE;
+  4         v_age  users.age%TYPE;
+  5         v_city users.address_city%TYPE;
+  6     BEGIN
+  7         v_res := users_below_avg_arun;
+  8         LOOP
+  9             FETCH v_res INTO v_name, v_age, v_city;
+ 10             EXIT WHEN v_res%NOTFOUND;
+ 11             DBMS_OUTPUT.PUT_LINE('NAME: ' || v_name || ' | AGE: ' || v_age || ' | CITY: ' || v_city);
+ 12         END LOOP;
+ 13         CLOSE v_res;
+ 14     END;
+ 15     /
+NAME: suryavanshi | AGE: 15 | CITY:
+NAME: @praveenvirat | AGE: 18 | CITY: madurai
+NAME: @manoj | AGE: 20 | CITY: madurai
+NAME: @prince | AGE: 20 | CITY: madurai
+NAME: @prasanna | AGE: 20 | CITY: sivakasi
+NAME: @david | AGE: 20 | CITY: tirunelveli
+NAME: @hari | AGE: 21 | CITY: tirunelveli
+NAME: @raja | AGE: 22 | CITY: viruthunagar
+
+PL/SQL procedure successfully completed.
+
+
